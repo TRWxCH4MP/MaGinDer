@@ -1,0 +1,124 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.trw.maginder.fragment.ManageTableFragment">
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/tb_menu"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/maginder_deep_grey">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/imgv_hamburger_menu"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/default_margin_padding"
+                        android:src="@drawable/list" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="ชื่อร้าน"
+                        android:textColor="@color/maginder_soft_white"
+                        android:textSize="@dimen/default_text_size_extra_large" />
+
+                </RelativeLayout>
+            </android.support.v7.widget.Toolbar>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_margin="@dimen/default_margin_padding_large"
+                        android:layout_weight="1"
+                        android:src="@mipmap/ic_launcher" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_margin="@dimen/default_margin_padding_large"
+                        android:layout_weight="1"
+                        android:src="@mipmap/ic_launcher_round" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_margin="@dimen/default_margin_padding_large"
+                        android:layout_weight="1"
+                        android:src="@mipmap/ic_launcher_round" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_margin="@dimen/default_margin_padding_large"
+                        android:layout_weight="1"
+                        android:src="@mipmap/ic_launcher_round" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_margin="@dimen/default_margin_padding_large"
+                        android:layout_weight="1"
+                        android:src="@mipmap/ic_launcher_round" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_margin="@dimen/default_margin_padding_large"
+                        android:layout_weight="1"
+                        android:src="@mipmap/ic_launcher_round" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Navigation drawer -->
+        <ListView
+            android:id="@+id/drawer"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/maginder_deep_grey"
+            android:choiceMode="singleChoice"
+            android:dividerHeight="1dp" />
+    </android.support.v4.widget.DrawerLayout>
+
+</RelativeLayout>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/img_order"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="@dimen/default_margin_padding_large"
+            android:src="@mipmap/ic_launcher_round" />
+
+        <TextView
+            android:id="@+id/tv_menu_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin_padding_large"
+            android:layout_toRightOf="@id/img_order"
+            android:hint="ไก่ผัดเผ็ดมะม่วง"
+            android:textSize="@dimen/default_text_size" />
+
+        <TextView
+            android:id="@+id/tv_menu_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_menu_name"
+            android:layout_marginStart="@dimen/default_margin_padding_large"
+            android:layout_toRightOf="@id/img_order"
+            android:hint="69 บาท"
+            android:textSize="@dimen/default_text_size" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin_padding_large"
+            android:layout_toStartOf="@id/tv_status"
+            android:hint="1"
+            android:textSize="@dimen/default_text_size" />
+
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/default_margin_padding"
+            android:hint="กำลังดำเนินการ"
+            android:textColorHint="@color/red"
+            android:textSize="@dimen/default_text_size" />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/tv_status"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/default_margin_padding"
+            android:layout_marginTop="@dimen/default_margin_padding_large"
+            android:src="@mipmap/ic_launcher" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

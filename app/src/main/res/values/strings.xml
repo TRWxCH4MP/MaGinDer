@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MaGinDer</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tab_food">ของคาว</string>
+    <string name="tab_dessert">ของหวาน</string>
+    <string name="tab_beverage">เครื่องดื่ม</string>
+    <string name="error_form_invalid">กรุณากรอก Username หรือ Password ให้ครบ!</string>
+    <string name="login_success">ล็อคอินสำเร็จ!</string>
+    <string name="login_failure">Username หรือ Password ไม่ถูกต้อง!</string>
+
+</resources>

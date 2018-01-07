@@ -1,0 +1,47 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="tab_layout_menu">
+        <item name="android:textSize">@dimen/default_text_size_extra_large</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="tab_layout_menu_food" parent="tab_layout_menu">
+        <item name="android:text">ของคาว</item>
+    </style>
+
+    <style name="tab_layout_menu_dessert" parent="tab_layout_menu">
+        <item name="android:text">ของหวาน</item>
+    </style>
+
+    <style name="tab_layout_menu_beverage" parent="tab_layout_menu">
+        <item name="android:text">เครื่องดื่ม</item>
+    </style>
+
+
+    <style name="Theme.CustomDialog" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="MyCustomTabLayout" parent="Base.Widget.Design.TabLayout">
+        <!--<item name="android:background">@color/maginder_soft_white</item>-->
+        <!--<item name="tabTextAppearance">@dimen/default_text_size_extra_extra_large</item>-->
+        <!--&lt;!&ndash;<item name="tabSelectedTextColor">SELECTED TAB TEXT COLOR</item>&ndash;&gt;-->
+        <!--<item name="tabIndicatorColor">@color/maginder_soft_yellow</item>-->
+        <item name="tabTextAppearance">@style/MyTabTextAppearance</item>
+    </style>
+
+    <style name="MyTabTextAppearance" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textSize">@dimen/default_text_size_extra_extra_large</item>
+    </style>
+
+
+</resources>
