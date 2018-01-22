@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
     android:layout_height="300dp"
     android:layout_gravity="center"
@@ -22,13 +23,15 @@
             android:textColor="@color/maginder_deep_grey"
             android:textSize="@dimen/default_text_size_large" />
 
-        <ImageView
-            android:id="@+id/imgv_table"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:scaleType="fitCenter"
+        <TextView
+            android:id="@+id/tv_table_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/default_margin_padding_large"
-            android:layout_toRightOf="@id/tv_table" />
+            android:textColor="@color/maginder_deep_grey"
+            android:textSize="@dimen/default_text_size_extra_extra_extra_large"
+            tools:text="A1" />
+
 
     </LinearLayout>
 

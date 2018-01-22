@@ -1,13 +1,100 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="300dp"
+    android:layout_height="300dp"
+    android:orientation="vertical"
     tools:context="com.example.trw.maginder.fragment.ManageTablePopupFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_marginStart="@dimen/default_margin_padding_large"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/tv_table"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="โต๊ะ"
+            android:textSize="@dimen/default_text_size_small" />
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_marginStart="@dimen/default_margin_padding_large"
+            android:layout_toRightOf="@id/tv_table"
+            android:src="@mipmap/ic_launcher" />
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/default_margin_padding_large"
+        android:layout_marginStart="@dimen/default_margin_padding_large"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tv_customer_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="จำนวนลูกค้า"
+            android:textSize="@dimen/default_text_size_small" />
+
+        <EditText
+            android:id="@+id/et_customer_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/default_margin_padding_large"
+            android:layout_toStartOf="@id/tv_text"
+            android:hint="2"
+            android:inputType="number"
+            android:textSize="@dimen/default_text_size_small" />
+
+        <TextView
+            android:id="@+id/tv_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="ท่าน"
+            android:textSize="@dimen/default_text_size_small" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin_padding_large"
+            android:layout_weight="1"
+            android:background="@drawable/bg_btn_radius_soft_orange"
+            android:text="ตกลง"
+            android:textColor="@color/maginder_soft_white"
+            android:textSize="@dimen/default_text_size_small" />
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin_padding_large"
+            android:layout_weight="1"
+            android:background="@drawable/bg_btn_radius_soft_white"
+            android:text="ยกเลิก"
+            android:textSize="@dimen/default_text_size_small" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,7 +1,15 @@
 package com.example.trw.maginder.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,6 +17,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trw.maginder.CreateDrawerMenu;
@@ -16,165 +26,209 @@ import com.example.trw.maginder.R;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
 import com.example.trw.maginder.adapter.item.OrderItem;
-import com.example.trw.maginder.callback.OnClickTitle;
-import com.example.trw.maginder.db.QueryData;
-import com.example.trw.maginder.db.SendListDataCallback;
-import com.example.trw.maginder.db.entity.EmployeeEntity;
-import com.example.trw.maginder.db.entity.MenuEntity;
+import com.example.trw.maginder.callback.OnChooseMenu;
+import com.example.trw.maginder.callback.OnFragmentCallback;
 import com.example.trw.maginder.fragment.AllMenuFragment;
+import com.example.trw.maginder.service.dao.RestaurantItemCollectionDao;
+import com.example.trw.maginder.service.dao.RestaurantItemDao;
+import com.example.trw.maginder.service.dao.RestaurantMenuTypeItemCollectionDao;
+import com.example.trw.maginder.service.http_manger.HttpManagerRestaurant;
+import com.example.trw.maginder.service.http_manger.HttpManagerRestaurantMenuType;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.holder.StringHolder;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class MenuActivity extends AppCompatActivity implements View.OnClickListener
-        , TabLayout.OnTabSelectedListener
-        , SendListDataCallback {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class MenuActivity extends AppCompatActivity implements View.OnClickListener, OnChooseMenu, OnFragmentCallback {
+    private static final String TAG = "MenuActivity";
+    private static final String PREF_NAME = "PREF_NAME";
+    private static final String NAME = "name";
+    private static final String TYPE = "type";
+    private static final String ID_RESTAURANT = "id_restaurant";
+    private static final String LIST_MENU = "listMenu";
 
     private CreateDrawerMenu createDrawer;
     private ImageView imageViewDrawerMenu;
     private TabLayout tabLayout;
-    OnClickTitle callback;
-
-    private Bundle bundle;
+    private TextView textViewOrderTotal;
     private String name;
     private String type;
+    private String idRestaurant;
+    private String tableId;
 
     private RecyclerView recyclerView;
     private MainAdapter adapter;
 
-    private List<String> listTabLayout = new ArrayList<>();
+    private List<String> listTabLayoutMenu = new ArrayList<>();
+    private List<RestaurantItemDao> listRestaurant;
+    private RestaurantItemCollectionDao menuDao;
+    private RestaurantMenuTypeItemCollectionDao menuTypeDao;
+    private List<String> listMenuId;
 
+    private Drawer drawer;
+    private PrimaryDrawerItem itemMenu;
+    private PrimaryDrawerItem itemSelectedMenu;
+    private PrimaryDrawerItem itemOrderedMenu;
+    private PrimaryDrawerItem itemPromotions;
+    private PrimaryDrawerItem itemSignOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        bundle = getIntent().getExtras();
-        name  = bundle.getString("name");
-        type = bundle.getString("type");
-
-        QueryData.onLoadMenuType(this, this);
-        initializeUI();
-        handelOnclick();
-        setupView();
-//        createTabLayout(listTabLayout);
-    }
-
-    private void createTabLayout(List<String> listTabLayout) {
-        tabLayout.addTab(tabLayout.newTab().setText("รวม"));
-        for (int index = 0; index < listTabLayout.size(); index++) {
-            tabLayout.addTab(tabLayout.newTab().setText(listTabLayout.get(index)));
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.contentContainer, new AllMenuFragment())
+                    .commit();
         }
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        tabLayout.addOnTabSelectedListener(this);
-    }
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        idRestaurant = sharedPreferences.getString(ID_RESTAURANT, null);
+        name = sharedPreferences.getString(NAME, null);
+        type = sharedPreferences.getString(TYPE, null);
 
-    private void handelOnclick() {
-        imageViewDrawerMenu.setOnClickListener(this);
+        Intent intent = getIntent();
+        tableId = intent.getStringExtra("tableId");
+        Log.d(TAG, "onCreate: " + tableId);
+
+//        if (!listMenuId.isEmpty()) {
+//            for (int index = 0; index < listMenuId.size(); index++) {
+//                Log.d(TAG, "onCreate: listMenu" + listMenuId.get(index));
+//            }
+//        }
+
+        initializeUI();
+        initializeDrawer();
     }
 
     private void initializeUI() {
-        recyclerView = findViewById(R.id.recycler_view_list_menu);
         imageViewDrawerMenu = findViewById(R.id.imgv_hamburger_menu);
-        tabLayout = findViewById(R.id.tab_title);
+        imageViewDrawerMenu.setOnClickListener(this);
 
-        createDrawer = new CreateDrawerMenu(this);
-        createDrawer.createNavigationDrawer(name, type);
     }
 
-    public void setupView() {
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        adapter = new MainAdapter();
-        recyclerView.setAdapter(adapter);
-    }
+    private void initializeDrawer() {
+        itemMenu = new PrimaryDrawerItem()
+                .withIdentifier(1)
+                .withName(R.string.menu)
+                .withIcon(R.drawable.menu_icon)
+                .withSelectable(false);
 
-    public void createItem(int menuType) {
-        List<BaseItem> itemList = new ArrayList<>();
+        itemSelectedMenu = new PrimaryDrawerItem()
+                .withIdentifier(2)
+                .withName(R.string.selected_menu)
+                .withIcon(R.drawable.cart_icon)
+                .withBadge("0")
+                .withBadgeStyle(new BadgeStyle()
+                        .withTextColor(Color.WHITE)
+                        .withColorRes(R.color.maginder_soft_yellow))
+                .withSelectable(false);
 
-        if (menuType == 0) {
-            itemList.add(new OrderItem()
-                    .setOrderImage(R.drawable.food)
-                    .setOrderName("พิซซ่า")
-                    .setOrderPrice("120 บาท"));
-        } else if (menuType == 1) {
-            itemList.clear();
-            adapter.notifyDataSetChanged();
-            Log.d("create Item", "createItem: menuType = 1");
-        }
+        itemOrderedMenu = new PrimaryDrawerItem()
+                .withIdentifier(3)
+                .withName(R.string.ordered_menu)
+                .withIcon(R.drawable.history_icon)
+                .withSelectable(false);
 
-        adapter.setItemList(itemList);
-        adapter.notifyDataSetChanged();
+        itemPromotions = new PrimaryDrawerItem()
+                .withIdentifier(4)
+                .withName(R.string.promotion)
+                .withIcon(R.drawable.promotion_icon)
+                .withSelectable(false);
+
+        itemSignOut = new PrimaryDrawerItem()
+                .withIdentifier(5)
+                .withName(R.string.choose_table)
+                .withIcon(R.drawable.signout_icon)
+                .withSelectable(false);
+
+        // Create the AccountHeader
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.maginder_deep_grey)
+                .addProfiles(
+                        new ProfileDrawerItem()
+                                .withName(type + " " + name)
+                                .withIcon(R.drawable.maginder_logo)
+                )
+                .build();
+
+
+        drawer = new DrawerBuilder()
+                .withSelectedItem(-1)
+                .withAccountHeader(headerResult)
+                .withActivity(this)
+                .withSliderBackgroundColorRes(R.color.maginder_deep_grey)
+                .addDrawerItems(
+                        itemMenu.withTextColorRes(R.color.maginder_soft_white),
+                        itemSelectedMenu.withTextColorRes(R.color.maginder_soft_white),
+                        itemOrderedMenu.withTextColorRes(R.color.maginder_soft_white),
+                        itemPromotions.withTextColorRes(R.color.maginder_soft_white),
+                        itemSignOut.withTextColorRes(R.color.maginder_soft_white)
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        if (drawerItem == itemMenu) {
+                            Fragment fragment = new AllMenuFragment();
+                            replaceFragment(fragment);
+                        } else if (drawerItem == itemSelectedMenu) {
+
+                        } else if (drawerItem == itemOrderedMenu) {
+
+                        } else if (drawerItem == itemPromotions) {
+
+                        } else if (drawerItem == itemSignOut) {
+                            finish();
+                        }
+                        return false;
+                    }
+                })
+                .build();
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.imgv_hamburger_menu:
-                createDrawer.navigationDrawerOpen();
+                drawer.openDrawer();
                 break;
         }
     }
 
-    public void replaceFragment(AllMenuFragment fragment, Bundle bundle) {
+    @Override
+    public void onChooseMenu(List<String> menuId) {
+        if (!menuId.isEmpty()) {
+            drawer.updateBadge(2, new StringHolder(String.valueOf(menuId.size())));
+        }
+    }
+
+    @Override
+    public void onFragmentCallback(Fragment fragment) {
+        if (fragment != null) {
+            replaceFragment(fragment);
+        }
+    }
+
+    public void replaceFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.contentContainer_item, fragment);
+        transaction.replace(R.id.contentContainer, fragment);
         transaction.commit();
 
-        fragment.setArguments(bundle);
-//        fragment.setupView(position);
-    }
-
-    public void removeFragment() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.remove(new AllMenuFragment()).commit();
-        Log.d("MenuActivity", "remove fragment");
-    }
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        if (tab.getPosition() == 0) {
-            Log.d("TabSelected", String.valueOf(tabLayout.getSelectedTabPosition()));
-        } else if (tab.getPosition() == 1) {
-            Log.d("TabSelected", String.valueOf(tabLayout.getSelectedTabPosition()));
-        } else if (tab.getPosition() == 2) {
-            Log.d("TabSelected", String.valueOf(tabLayout.getSelectedTabPosition()));
-        } else if (tab.getPosition() == 3) {
-            Log.d("TabSelected", String.valueOf(tabLayout.getSelectedTabPosition()));
-        }
-        Toast.makeText(this, String.valueOf(tabLayout.getSelectedTabPosition()), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-        if (tab.getPosition() == 0) {
-            Toast.makeText(this, String.valueOf(tabLayout.getSelectedTabPosition()), Toast.LENGTH_SHORT).show();
-        } else if (tab.getPosition() == 1) {
-            Toast.makeText(this, String.valueOf(tabLayout.getSelectedTabPosition()), Toast.LENGTH_SHORT).show();
-        } else if (tab.getPosition() == 2) {
-            Toast.makeText(this, String.valueOf(tabLayout.getSelectedTabPosition()), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void loadEmployeeDataCallback(List<EmployeeEntity> employeeEntities, boolean isSuccess) {
-
-    }
-
-    @Override
-    public void loadMenuTypeDataCallback(List<MenuEntity> menuEntities, boolean isSuccess) {
-        if (isSuccess) {
-            for (int index = 0; index < menuEntities.size(); index++) {
-                listTabLayout.add(menuEntities.get(index).getMenuTypeName());
-                Log.d("MenuType", menuEntities.size() + "");
-            }
-            createTabLayout(listTabLayout);
-        }
     }
 }

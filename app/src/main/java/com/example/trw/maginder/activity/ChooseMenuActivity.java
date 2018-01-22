@@ -1,27 +1,23 @@
 package com.example.trw.maginder.activity;
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.callback.FragmentCallback;
+import com.example.trw.maginder.callback.OnFragmentCallback;
 import com.example.trw.maginder.fragment.ChooseFoodTypeFragment;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 
-public class ChooseMenuActivity extends AppCompatActivity implements View.OnClickListener, FragmentCallback {
+public class ChooseMenuActivity extends AppCompatActivity implements View.OnClickListener, OnFragmentCallback {
 
     private String[] mDrawerTitle = {"ตะกร้าเมนู", "ของคาว", "ของหวาน", "เครื่องดื่ม", "โปรโมชั่น", "เมนูที่สั่ง"};
     private ImageView mImageViewHamburgerMenu;
@@ -92,7 +88,7 @@ public class ChooseMenuActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    public void handleEvent(Fragment fragment) {
+    public void onFragmentCallback(Fragment fragment) {
         replaceFragment(fragment);
     }
 

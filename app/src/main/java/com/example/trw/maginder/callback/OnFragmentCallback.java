@@ -6,8 +6,8 @@ import android.app.Fragment;
  * Created by _TRW on 15/12/2560.
  */
 
-public interface FragmentCallback {
+public interface OnFragmentCallback {
 
-    void handleEvent(android.support.v4.app.Fragment fragment);
+    void onFragmentCallback(android.support.v4.app.Fragment fragment);
 
 }

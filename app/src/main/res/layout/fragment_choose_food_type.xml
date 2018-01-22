@@ -1,12 +1,12 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.trw.maginder.fragment.ChooseFoodTypeFragment">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
@@ -20,8 +20,9 @@
                 android:layout_weight="1">
 
                 <ImageView
+                    android:id="@+id/imgv_type_food"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="match_parent"
                     android:background="@color/green"
                     android:scaleType="centerCrop" />
 
@@ -31,7 +32,8 @@
                     android:layout_centerInParent="true"
                     android:text="ของคาว"
                     android:textColor="@color/maginder_soft_white"
-                    android:textSize="@dimen/default_text_size_extra_large" />
+                    android:textSize="@dimen/default_text_size_extra_extra_extra_large"
+                    android:textStyle="bold" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -40,8 +42,9 @@
                 android:layout_weight="1">
 
                 <ImageView
+                    android:id="@+id/imgv_type_dessert"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="match_parent"
                     android:background="@color/brown"
                     android:scaleType="centerCrop" />
 
@@ -51,7 +54,8 @@
                     android:layout_centerInParent="true"
                     android:text="ของหวาน"
                     android:textColor="@color/maginder_soft_white"
-                    android:textSize="@dimen/default_text_size_extra_large" />
+                    android:textSize="@dimen/default_text_size_extra_extra_extra_large"
+                    android:textStyle="bold" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -60,8 +64,9 @@
                 android:layout_weight="1">
 
                 <ImageView
+                    android:id="@+id/imgv_type_beverage"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="match_parent"
                     android:background="@color/blue_grey"
                     android:scaleType="centerCrop" />
 
@@ -71,10 +76,10 @@
                     android:layout_centerInParent="true"
                     android:text="เครื่องดื่ม"
                     android:textColor="@color/maginder_soft_white"
-                    android:textSize="@dimen/default_text_size_extra_large" />
+                    android:textSize="@dimen/default_text_size_extra_extra_extra_large"
+                    android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
 
-
-</FrameLayout>
+</RelativeLayout>

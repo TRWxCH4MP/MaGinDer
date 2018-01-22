@@ -2,28 +2,22 @@ package com.example.trw.maginder.fragment;
 
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.callback.FragmentCallback;
+import com.example.trw.maginder.callback.OnFragmentCallback;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ChooseFoodTypeFragment extends Fragment implements View.OnClickListener {
 
-    private FragmentCallback mCallback;
+    private OnFragmentCallback mCallback;
     private ImageView mTypeFood;
     private ImageView mTypeDessert;
     private ImageView mTypeBeverage;
@@ -33,10 +27,10 @@ public class ChooseFoodTypeFragment extends Fragment implements View.OnClickList
         super.onAttach(context);
 
         try {
-            mCallback = (FragmentCallback) context;
+            mCallback = (OnFragmentCallback) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement FragmentCallback ");
+                    + " must implement OnFragmentCallback ");
         }
     }
 
@@ -73,13 +67,13 @@ public class ChooseFoodTypeFragment extends Fragment implements View.OnClickList
         Fragment fragment = new AllMenuFragment();
         switch (view.getId()) {
             case R.id.imgv_type_food:
-                mCallback.handleEvent(fragment);
+                mCallback.onFragmentCallback(fragment);
                 break;
             case R.id.imgv_type_dessert:
-                mCallback.handleEvent(fragment);
+                mCallback.onFragmentCallback(fragment);
                 break;
             case R.id.imgv_type_beverage:
-                mCallback.handleEvent(fragment);
+                mCallback.onFragmentCallback(fragment);
                 break;
         }
     }

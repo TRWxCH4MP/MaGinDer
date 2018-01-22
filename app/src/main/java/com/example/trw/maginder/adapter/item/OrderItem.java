@@ -8,19 +8,20 @@ import com.example.trw.maginder.adapter.ViewType;
 
 public class OrderItem extends BaseItem {
 
-    private int orderImage;
+    private String orderImage;
     private String orderName;
     private String orderPrice;
+    private String orderId;
 
     public OrderItem() {
         super(ViewType.TYPE_ORDER_VIEW);
     }
 
-    public int getOrderImage() {
+    public String getOrderImage() {
         return orderImage;
     }
 
-    public OrderItem setOrderImage(int orderImage) {
+    public OrderItem setOrderImage(String orderImage) {
         this.orderImage = orderImage;
         return this;
     }
@@ -40,6 +41,15 @@ public class OrderItem extends BaseItem {
 
     public OrderItem setOrderPrice(String orderPrice) {
         this.orderPrice = orderPrice;
+        return this;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public OrderItem setOrderId(String orderId) {
+        this.orderId = orderId;
         return this;
     }
 }

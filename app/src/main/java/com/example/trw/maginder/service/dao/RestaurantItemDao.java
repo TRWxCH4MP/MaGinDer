@@ -17,6 +17,9 @@ public class RestaurantItemDao {
     @SerializedName("ID_menu_type")
     private String idMenuType;
 
+    @SerializedName("name_type")
+    private String nameType;
+
     @SerializedName("name")
     private String name;
 
@@ -25,6 +28,9 @@ public class RestaurantItemDao {
 
     @SerializedName("price")
     private String price;
+
+    @SerializedName("img")
+    private String img;
 
     public String getIdMenu() {
         return idMenu;
@@ -50,6 +56,14 @@ public class RestaurantItemDao {
         this.idMenuType = idMenuType;
     }
 
+    public String getNameType() {
+        return nameType;
+    }
+
+    public void setNameType(String nameType) {
+        this.nameType = nameType;
+    }
+
     public String getName() {
         return name;
     }
@@ -72,5 +86,13 @@ public class RestaurantItemDao {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 }

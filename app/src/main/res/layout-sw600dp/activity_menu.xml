@@ -45,25 +45,52 @@
                 </RelativeLayout>
             </android.support.v7.widget.Toolbar>
 
-            <!--<FrameLayout-->
-            <!--android:id="@+id/contentContainer_title"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content" />-->
-
             <android.support.design.widget.TabLayout
                 android:id="@+id/tab_title"
                 android:layout_width="match_parent"
                 android:layout_height="65dp" />
 
-            <!--<FrameLayout-->
-                <!--android:id="@+id/contentContainer_item"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent" />-->
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view_list_menu"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_list_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <RelativeLayout
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="@dimen/default_margin_padding_extra_large"
+                    android:layout_marginEnd="@dimen/default_margin_padding_large"
+                    android:background="@drawable/bg_btn_radius_soft_orange">
+
+                    <TextView
+                        android:id="@+id/tv_menu_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/default_margin_padding"
+                        android:layout_marginStart="@dimen/default_margin_padding"
+                        android:layout_marginTop="@dimen/default_margin_padding_small"
+                        android:gravity="end"
+                        android:text="0"
+                        android:textColor="@color/maginder_soft_white"
+                        android:textSize="@dimen/default_text_size_small"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/imgv_cart"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/cart_icon" />
+
+                </RelativeLayout>
+            </RelativeLayout>
 
         </LinearLayout>
 

@@ -32,6 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="ชื่อ"
+            android:inputType="text"
             android:textColor="@color/maginder_soft_white"
             android:textColorHint="@color/maginder_soft_white"
             android:textSize="@dimen/default_text_size_large" />
@@ -57,7 +58,14 @@
             android:textColor="@color/maginder_soft_white"
             android:textSize="@dimen/default_text_size_large" />
 
-
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar_logging"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        tools:visibility="visible" />
 
 </RelativeLayout>

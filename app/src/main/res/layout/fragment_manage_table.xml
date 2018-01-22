@@ -38,7 +38,7 @@
                         android:layout_centerInParent="true"
                         android:text="ชื่อร้าน"
                         android:textColor="@color/maginder_soft_white"
-                        android:textSize="@dimen/default_text_size_extra_large" />
+                        android:textSize="@dimen/default_text_size" />
 
                 </RelativeLayout>
             </android.support.v7.widget.Toolbar>

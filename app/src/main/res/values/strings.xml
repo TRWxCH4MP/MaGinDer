@@ -9,5 +9,11 @@
     <string name="error_form_invalid">กรุณากรอก Username หรือ Password ให้ครบ!</string>
     <string name="login_success">ล็อคอินสำเร็จ!</string>
     <string name="login_failure">Username หรือ Password ไม่ถูกต้อง!</string>
+    <string name="menu">เมนูอาหาร</string>
+    <string name="selected_menu">อาหารที่เลือก</string>
+    <string name="ordered_menu">อาหารที่สั่งแล้ว</string>
+    <string name="promotion">โปรโมชั่น</string>
+    <string name="sign_out">ออกจากระบบ</string>
+    <string name="choose_table">เลือกโต๊ะ</string>
 
 </resources>
