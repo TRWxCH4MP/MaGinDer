@@ -1,56 +1,80 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.example.trw.maginder.fragment.AllMenuFragment">
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tab_title"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="65dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view_list_menu"
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="65dp" />
 
         <RelativeLayout
-            android:id="@+id/icon_cart"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="@dimen/default_margin_padding"
-            android:layout_marginEnd="@dimen/default_margin_padding"
-            android:background="@drawable/bg_btn_radius_soft_orange">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/default_margin_padding">
 
-            <TextView
-                android:id="@+id/tv_menu_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_list_menu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <RelativeLayout
+                android:id="@+id/icon_cart"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
+                android:layout_marginBottom="@dimen/default_margin_padding"
                 android:layout_marginEnd="@dimen/default_margin_padding"
-                android:layout_marginStart="@dimen/default_margin_padding"
-                android:layout_marginTop="@dimen/default_margin_padding_small"
-                android:gravity="end"
-                android:text="0"
-                android:textColor="@color/maginder_soft_white"
-                android:textStyle="bold" />
+                android:background="@drawable/bg_btn_radius_soft_orange">
 
-            <ImageView
-                android:id="@+id/imgv_cart"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_centerInParent="true"
-                android:src="@drawable/cart_icon" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
+                    <ImageView
+                        android:id="@+id/imgv_menu_circle"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/default_margin_padding"
+                        android:layout_marginStart="@dimen/default_margin_padding"
+                        android:layout_marginTop="@dimen/default_margin_padding"
+                        android:src="@drawable/circle_icon" />
+
+                    <TextView
+                        android:id="@+id/tv_menu_count"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/default_margin_padding"
+                        android:layout_marginStart="@dimen/default_margin_padding"
+                        android:layout_marginTop="@dimen/default_margin_padding"
+                        android:gravity="center"
+                        android:text="00"
+                        android:textColor="@color/maginder_soft_white"
+                        android:textSize="@dimen/default_text_size_extra_extra_extra_small"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+
+                <ImageView
+                    android:id="@+id/imgv_cart"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="@dimen/default_margin_padding_large"
+                    android:src="@drawable/cart_icon" />
+
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
+    </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

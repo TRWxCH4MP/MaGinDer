@@ -29,6 +29,9 @@ public class RestaurantItemDao {
     @SerializedName("price")
     private String price;
 
+    @SerializedName("date")
+    private String date;
+
     @SerializedName("img")
     private String img;
 
@@ -86,6 +89,14 @@ public class RestaurantItemDao {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getImg() {

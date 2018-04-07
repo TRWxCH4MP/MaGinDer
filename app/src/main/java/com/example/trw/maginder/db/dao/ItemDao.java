@@ -17,14 +17,15 @@ import java.util.List;
 public interface ItemDao {
 
     @Insert
-    void insertEmployee(EmployeeEntity employeeEntity);
+    void insertMenu(MenuEntity menuEntity);
 
-    @Insert
-    void insertMenuType(MenuEntity menuEntity);
+    @Query("SELECT * FROM menu")
+    List<MenuEntity> loadAllMenu();
 
-    @Query("SELECT * FROM employee")
-    List<EmployeeEntity> loadAllEmployee();
+    @Query("DELETE FROM menu")
+    void deleteAllMenu();
 
-    @Query("SELECT * FROM menu_type")
-    List<MenuEntity> loadAllMenuType();
+    @Query("DELETE FROM menu WHERE primary_id = :primaryId")
+    void deleteMenuByPrimaryId(String primaryId);
+
 }

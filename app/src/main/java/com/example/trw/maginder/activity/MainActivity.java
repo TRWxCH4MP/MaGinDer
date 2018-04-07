@@ -7,23 +7,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.trw.maginder.R;
+import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.callback.OnFragmentCallback;
+import com.example.trw.maginder.db.QueryData;
+import com.example.trw.maginder.db.callback.SendListDataCallback;
+import com.example.trw.maginder.db.entity.MenuEntity;
 import com.example.trw.maginder.fragment.LoginFragment;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentCallback {
 
-    private static final String PREF_NAME = "PREF_NAME";
-    public static final String STATUS = "status";
-    public static final String NAME = "name";
-    public static final String TYPE = "type";
-    public static final String ID_RESTAURANT = "id_restaurant";
+    private static final String TAG = "MainActivity";
     private Intent intent;
-    private Bundle bundle;
-    private String name;
-    private String type;
-    private String idRestaurant;
+    private String employeeType;
+    private boolean loginStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +37,12 @@ public class MainActivity extends AppCompatActivity implements OnFragmentCallbac
                     .commit();
         }
 
-        SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        boolean loginStatus = sharedPreferences.getBoolean(STATUS, false);
-        type = sharedPreferences.getString(TYPE, null);
+        SharedPreferences sharedPreferences = getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
+        loginStatus = sharedPreferences.getBoolean(StaticStringHelper.STATUS, false);
+        employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
 
         if (loginStatus) {
-            if (type.equals(TYPE)) {
+            if (employeeType.equals(StaticStringHelper.EMPLOYEE_TYPE)) {
                 intent = new Intent(this, ManageTableActivity.class);
                 startActivity(intent);
                 finish();

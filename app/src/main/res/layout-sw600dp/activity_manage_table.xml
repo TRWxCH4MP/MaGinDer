@@ -12,8 +12,8 @@
     <!--android:layout_height="match_parent">-->
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
@@ -35,30 +35,22 @@
                     android:src="@drawable/list" />
 
                 <TextView
+                    android:id="@+id/tv_title_restaurant_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="ชื่อร้าน"
                     android:textColor="@color/maginder_soft_white"
-                    android:textSize="@dimen/default_text_size_extra_extra_large" />
+                    android:textSize="@dimen/default_text_size" />
 
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tab_title"
+        <FrameLayout
+            android:id="@+id/contentContainer"
             android:layout_width="match_parent"
-            android:layout_height="65dp" />
+            android:layout_height="match_parent" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view_table"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </RelativeLayout>
     </LinearLayout>
 
     <!-- Navigation drawer -->
@@ -71,5 +63,6 @@
     <!--android:choiceMode="singleChoice"-->
     <!--android:dividerHeight="1dp" />-->
     <!--</android.support.v4.widget.DrawerLayout>-->
+
 
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.example.trw.maginder;
+package com.example.trw.maginder.create_item;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.trw.maginder.R;
 import com.example.trw.maginder.activity.MainActivity;
 import com.example.trw.maginder.activity.ManageTableActivity;
 import com.example.trw.maginder.callback.OnCallbackState;

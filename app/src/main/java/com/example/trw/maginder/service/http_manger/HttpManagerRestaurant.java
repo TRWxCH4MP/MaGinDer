@@ -31,7 +31,7 @@ public class HttpManagerRestaurant {
         httpClient.addInterceptor(logging);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://suttest.atwebpages.com/Project/App/")
+                .baseUrl("http://it2.sut.ac.th/prj60_g14/Project/App/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(httpClient.build())
                 .build();

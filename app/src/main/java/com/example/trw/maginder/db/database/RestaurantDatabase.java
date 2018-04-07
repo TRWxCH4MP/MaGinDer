@@ -13,7 +13,7 @@ import com.example.trw.maginder.db.entity.MenuEntity;
  * Created by _TRW on 25/12/2560.
  */
 
-@Database(entities = {EmployeeEntity.class, MenuEntity.class}, version = 1)
+@Database(entities = {MenuEntity.class}, version = 1)
 public abstract class RestaurantDatabase extends RoomDatabase{
 
     private static RestaurantDatabase INSTANCE;
@@ -21,7 +21,7 @@ public abstract class RestaurantDatabase extends RoomDatabase{
     public abstract ItemDao itemDao();
 
     public static RestaurantDatabase getAppDatabase(Context context) {
-        String DATABASE_NAME = "db-restaurant";
+        String DATABASE_NAME = "db-maginder";
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context
             , RestaurantDatabase.class

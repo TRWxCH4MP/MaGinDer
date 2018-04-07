@@ -12,8 +12,12 @@
     <string name="menu">เมนูอาหาร</string>
     <string name="selected_menu">อาหารที่เลือก</string>
     <string name="ordered_menu">อาหารที่สั่งแล้ว</string>
+    <string name="manage_order_menu">จัดการรายการอาหาร</string>
     <string name="promotion">โปรโมชั่น</string>
     <string name="sign_out">ออกจากระบบ</string>
     <string name="choose_table">เลือกโต๊ะ</string>
+    <string name="user">ผู้ใช้</string>
+    <string name="total">รวม</string>
+    <string name="table">โต๊ะ</string>
 
 </resources>

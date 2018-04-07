@@ -7,9 +7,10 @@ import android.view.View;
  * Created by _TRW on 19/12/2560.
  */
 
-public class BaseViewHolder extends RecyclerView.ViewHolder{
+public abstract class BaseViewHolder extends RecyclerView.ViewHolder{
 
     public BaseViewHolder(View itemView) {
         super(itemView);
     }
+
 }

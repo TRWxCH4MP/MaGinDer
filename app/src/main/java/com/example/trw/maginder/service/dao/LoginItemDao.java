@@ -10,14 +10,22 @@ public class LoginItemDao {
 
     @SerializedName("status")
     private boolean status;
+
     @SerializedName("name")
     private String name;
+
     @SerializedName("type")
     private String type;
-    @SerializedName("ID_Restaurant")
-    private String idRestaurant;
+
+    @SerializedName("Restaurant_Name")
+    private String restaurantName;
+
     @SerializedName("ID_Employee")
     private String idEmployee;
+
+    @SerializedName("ID_Restaurant")
+    private String idRestaurant;
+
 
     public boolean isStatus() {
         return status;
@@ -43,12 +51,12 @@ public class LoginItemDao {
         this.type = type;
     }
 
-    public String getIdRestaurant() {
-        return idRestaurant;
+    public String getRestaurantName() {
+        return restaurantName;
     }
 
-    public void setIdRestaurant(String idRestaurant) {
-        this.idRestaurant = idRestaurant;
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
     }
 
     public String getIdEmployee() {
@@ -57,5 +65,13 @@ public class LoginItemDao {
 
     public void setIdEmployee(String idEmployee) {
         this.idEmployee = idEmployee;
+    }
+
+    public String getIdRestaurant() {
+        return idRestaurant;
+    }
+
+    public void setIdRestaurant(String idRestaurant) {
+        this.idRestaurant = idRestaurant;
     }
 }

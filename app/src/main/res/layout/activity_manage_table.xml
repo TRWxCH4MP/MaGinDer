@@ -7,70 +7,62 @@
     tools:context="com.example.trw.maginder.activity.ManageTableActivity">
 
     <!--<android.support.v4.widget.DrawerLayout-->
-        <!--android:id="@+id/drawer_layout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <!--android:id="@+id/drawer_layout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/tb_menu"
-                android:layout_width="match_parent"
-                android:layout_height="65dp"
-                android:background="@color/maginder_deep_grey">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/imgv_hamburger_menu"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="@dimen/default_margin_padding"
-                        android:src="@drawable/list" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:text="ชื่อร้าน"
-                        android:textColor="@color/maginder_soft_white"
-                        android:textSize="@dimen/default_text_size" />
-
-                </RelativeLayout>
-            </android.support.v7.widget.Toolbar>
-
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tab_title"
-                android:layout_width="match_parent"
-                android:layout_height="65dp" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tb_menu"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="@color/maginder_deep_grey">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_table"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                <ImageView
+                    android:id="@+id/imgv_hamburger_menu"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/default_margin_padding"
+                    android:src="@drawable/list" />
+
+                <TextView
+                    android:id="@+id/tv_title_restaurant_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="ชื่อร้าน"
+                    android:textColor="@color/maginder_soft_white"
+                    android:textSize="@dimen/default_text_size" />
+
             </RelativeLayout>
+        </android.support.v7.widget.Toolbar>
 
-        </LinearLayout>
+        <FrameLayout
+            android:id="@+id/contentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-        <!-- Navigation drawer -->
-        <!--<ListView-->
-            <!--android:id="@+id/drawer"-->
-            <!--android:layout_width="320dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_gravity="start"-->
-            <!--android:background="@color/maginder_deep_grey"-->
-            <!--android:choiceMode="singleChoice"-->
-            <!--android:dividerHeight="1dp" />-->
+    </LinearLayout>
+
+    <!-- Navigation drawer -->
+    <!--<ListView-->
+    <!--android:id="@+id/drawer"-->
+    <!--android:layout_width="320dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_gravity="start"-->
+    <!--android:background="@color/maginder_deep_grey"-->
+    <!--android:choiceMode="singleChoice"-->
+    <!--android:dividerHeight="1dp" />-->
     <!--</android.support.v4.widget.DrawerLayout>-->
+
 
 </RelativeLayout>

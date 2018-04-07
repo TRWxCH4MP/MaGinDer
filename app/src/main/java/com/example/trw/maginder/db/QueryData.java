@@ -3,10 +3,9 @@ package com.example.trw.maginder.db;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.example.trw.maginder.db.callback.SendListDataCallback;
 import com.example.trw.maginder.db.database.RestaurantDatabase;
-import com.example.trw.maginder.db.entity.EmployeeEntity;
 import com.example.trw.maginder.db.entity.MenuEntity;
-import com.example.trw.maginder.fragment.LoginFragment;
 
 import java.util.List;
 
@@ -16,64 +15,34 @@ import java.util.List;
 
 public class QueryData {
 
-    public static void onLoadEmployee(final Context context, final SendListDataCallback callback) {
-        new loadEmployee(context, callback).execute();
+    public static void onLoadMenu(final Context context, final SendListDataCallback callback) {
+        new loadMenu(context, callback).execute();
     }
 
-    public static void onLoadMenuType(final Context context, final  SendListDataCallback callback) {
-        new loadMenuType(context, callback).execute();
-    }
-
-    public static class loadEmployee extends AsyncTask<Void, Void, Void> {
+    public static class loadMenu extends AsyncTask<Void, Void, Void> {
         Context context;
         SendListDataCallback callback;
-        List<EmployeeEntity> listEmployee;
+        List<MenuEntity> listMenu;
 
-        public loadEmployee(Context context, SendListDataCallback callback) {
+
+        public loadMenu(Context context, SendListDataCallback callback) {
             this.context = context;
             this.callback = callback;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            listEmployee = RestaurantDatabase.getAppDatabase(context).itemDao().loadAllEmployee();
+            listMenu = RestaurantDatabase.getAppDatabase(context).itemDao().loadAllMenu();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (!listEmployee.isEmpty()) {
-                callback.loadEmployeeDataCallback(listEmployee, true);
+            if (!listMenu.isEmpty()) {
+                callback.loadMenuCallback(listMenu, true);
             } else {
-                callback.loadEmployeeDataCallback(listEmployee, false);
-            }
-        }
-    }
-
-    public static class loadMenuType extends AsyncTask<Void, Void, Void> {
-        Context context;
-        SendListDataCallback callback;
-        List<MenuEntity> listMenuType;
-
-        public loadMenuType(Context context, SendListDataCallback callback) {
-            this.context = context;
-            this.callback = callback;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            listMenuType = RestaurantDatabase.getAppDatabase(context).itemDao().loadAllMenuType();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (!listMenuType.isEmpty()) {
-                callback.loadMenuTypeDataCallback(listMenuType, true);
-            } else {
-                callback.loadMenuTypeDataCallback(listMenuType, false);
+                callback.loadMenuCallback(listMenu, false);
             }
         }
     }

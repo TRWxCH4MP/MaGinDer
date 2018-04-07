@@ -1,4 +1,4 @@
-package com.example.trw.maginder.db;
+package com.example.trw.maginder.db.callback;
 
 import com.example.trw.maginder.db.entity.EmployeeEntity;
 import com.example.trw.maginder.db.entity.MenuEntity;
@@ -11,7 +11,5 @@ import java.util.List;
 
 public interface SendListDataCallback {
 
-    void loadEmployeeDataCallback(List<EmployeeEntity> employeeEntities, boolean isSuccess);
-
-    void loadMenuTypeDataCallback(List<MenuEntity> menuEntities, boolean isSuccess);
+    void loadMenuCallback(List<MenuEntity> menuEntities, boolean isSuccess);
 }

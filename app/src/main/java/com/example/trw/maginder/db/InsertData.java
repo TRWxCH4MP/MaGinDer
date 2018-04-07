@@ -5,9 +5,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Menu;
 
+import com.example.trw.maginder.db.callback.OnStateCallback;
+import com.example.trw.maginder.db.callback.SendListDataCallback;
 import com.example.trw.maginder.db.database.RestaurantDatabase;
 import com.example.trw.maginder.db.entity.EmployeeEntity;
 import com.example.trw.maginder.db.entity.MenuEntity;
+
+import java.util.List;
 
 /**
  * Created by _TRW on 25/12/2560.
@@ -17,67 +21,48 @@ public class InsertData {
 
     public static String TAG = "InsertData";
 
-    public static void onInsertEmployee(final Context context
-            , final EmployeeEntity employeeEntity) {
+    public static void onInsertMenu(final Context context,final MenuEntity menuEntity, final OnStateCallback stateCallback) {
 
-        new insertEmployee(context, employeeEntity).execute();
+        new insertMenu(context, menuEntity, stateCallback).execute();
     }
 
-    public static class insertEmployee extends AsyncTask<Void, Void, Void> {
-        Context context;
-        EmployeeEntity employeeEntity;
-
-        public insertEmployee(Context context, EmployeeEntity employeeEntity) {
-            this.context = context;
-            this.employeeEntity = employeeEntity;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            RestaurantDatabase.getAppDatabase(context).itemDao().insertEmployee(employeeEntity);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(TAG, "Employee: successful");
-        }
-
-        @Override
-        protected void onPreExecute() {
-        }
-    }
-
-    public static void onInsertMenuType(final Context context
-            , final MenuEntity menuEntity) {
-
-        new insertMenuType(context, menuEntity).execute();
-    }
-
-    public static class insertMenuType extends AsyncTask<Void, Void, Void> {
+    public static class insertMenu extends AsyncTask<Void, Void, Void> {
         Context context;
         MenuEntity menuEntity;
+        OnStateCallback stateCallback;
 
-        public insertMenuType(Context context, MenuEntity menuEntity) {
+        public insertMenu(Context context, MenuEntity menuEntity , OnStateCallback stateCallback) {
             this.context = context;
             this.menuEntity = menuEntity;
+            this.stateCallback = stateCallback;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            RestaurantDatabase.getAppDatabase(context).itemDao().insertMenuType(menuEntity);
+            RestaurantDatabase.getAppDatabase(context).itemDao().insertMenu(menuEntity);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Log.d(TAG, "MenuType: successful");
+            Log.d(TAG, "MenuEntity: successful");
+            QueryData.onLoadMenu(context, new SendListDataCallback() {
+                @Override
+                public void loadMenuCallback(List<MenuEntity> menuEntities, boolean isSuccess) {
+                    if (isSuccess) {
+                        stateCallback.stateCallback(true);
+                    } else {
+                        stateCallback.stateCallback(false);
+                    }
+                }
+            });
         }
 
         @Override
         protected void onPreExecute() {
+
         }
     }
+
 }
