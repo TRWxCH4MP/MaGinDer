@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_margin="@dimen/default_margin_padding_extra_small">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_table_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/tv_zone_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/tv_table_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/default_text_size_large"
+            android:textStyle="bold"
+            tools:text="T1"
+            tools:textColor="@color/maginder_deep_grey"
+            tools:textSize="@dimen/default_text_size_large"
+            tools:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_table_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/maginder_red"
+            android:textSize="@dimen/default_text_size_extra_small"
+            tools:text="ไม่เปิดใช้บริการ"
+            tools:textColor="@color/maginder_red"
+            tools:textSize="@dimen/default_text_size_extra_small" />
+
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
