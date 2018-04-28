@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trw.maginder.R;
+import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
 import com.example.trw.maginder.adapter.item.MenuItem;
@@ -69,9 +70,9 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     private static final String STATUS_WAITING_VERIFY = "รอการยืนยัน";
     private static final String STATUS_IN_PROCEED = "กำลังดำเนินการ";
 
-    private String name;
-    private String type;
-    private String idRestaurant;
+    private String employeeName;
+    private String employeeType;
+    private String restaurantId;
     private String tableId;
     private String transaction;
     private String tableName;
@@ -126,9 +127,9 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
 
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        idRestaurant = sharedPreferences.getString(ID_RESTAURANT, null);
-        name = sharedPreferences.getString(NAME, null);
-        type = sharedPreferences.getString(TYPE, null);
+        employeeName = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_NAME, null);
+        employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
+        restaurantId = sharedPreferences.getString(StaticStringHelper.RESTAURANT_ID, null);
 
         if (getArguments() != null) {
             tableId = getArguments().getString("TableId");
@@ -139,7 +140,7 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
             Log.d(TAG, "onCreate: " + transaction);
         }
 
-        if (!idRestaurant.isEmpty()) {
+        if (!restaurantId.isEmpty()) {
             getDataRestaurantMenuType();
         }
 
@@ -250,7 +251,7 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     }
 
     private void getDataRestaurantMenuType() {
-        Call<RestaurantMenuTypeItemCollectionDao> call = HttpManagerRestaurantMenuType.getInstance().getService().repos(idRestaurant);
+        Call<RestaurantMenuTypeItemCollectionDao> call = HttpManagerRestaurantMenuType.getInstance().getService().repos(restaurantId);
         call.enqueue(new Callback<RestaurantMenuTypeItemCollectionDao>() {
             @Override
             public void onResponse(Call<RestaurantMenuTypeItemCollectionDao> call, Response<RestaurantMenuTypeItemCollectionDao> response) {
@@ -279,7 +280,7 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     }
 
     private void getDataRestaurantMenu() {
-        Call<RestaurantItemCollectionDao> call = HttpManagerRestaurant.getInstance().getService().repos(idRestaurant);
+        Call<RestaurantItemCollectionDao> call = HttpManagerRestaurant.getInstance().getService().repos(restaurantId);
         call.enqueue(new Callback<RestaurantItemCollectionDao>() {
             @Override
             public void onResponse(Call<RestaurantItemCollectionDao> call, Response<RestaurantItemCollectionDao> response) {

@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.trw.maginder.R;
+import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.callback.OnChooseMenu;
 import com.example.trw.maginder.callback.OnFragmentCallback;
@@ -81,9 +82,9 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageViewDrawerMenu;
     private TabLayout tabLayout;
     private TextView textViewOrderTotal;
-    private String userName;
-    private String userType;
-    private String idRestaurant;
+    private String employeeName;
+    private String employeeType;
+    private String restaurantId;
     private String tableId;
     private String timeStampTransaction;
     private String tableName;
@@ -120,9 +121,9 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         bundle = new Bundle();
 
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        idRestaurant = sharedPreferences.getString(ID_RESTAURANT, null);
-        userName = sharedPreferences.getString(NAME, null);
-        userType = sharedPreferences.getString(TYPE, null);
+        employeeName = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_NAME, null);
+        employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
+        restaurantId = sharedPreferences.getString(StaticStringHelper.RESTAURANT_ID, null);
 
         Intent intent = getIntent();
         tableId = intent.getStringExtra("tableId");
@@ -134,7 +135,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
 
         if (savedInstanceState == null) {
             Fragment fragment = new AllMenuFragment();
-            bundle.putString(ID_RESTAURANT, idRestaurant);
+            bundle.putString(ID_RESTAURANT, restaurantId);
             bundle.putString("TableId", tableId);
             bundle.putString("TableName", tableName);
             bundle.putString("Transaction", timeStampTransaction);
@@ -201,7 +202,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                 .withHeaderBackground(R.color.maginder_deep_grey)
                 .addProfiles(
                         new ProfileDrawerItem()
-                                .withName(userType + " " + userName)
+                                .withName(employeeType + " " + employeeName)
                                 .withIcon(R.drawable.maginder_logo)
                 )
                 .build();
@@ -328,14 +329,14 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
 
         mDatabaseRef = mRootRef
                 .child(TRANSACTION)
-                .child(idRestaurant)
+                .child(restaurantId)
                 .child(tableId);
 
         mDatabaseRef.child("data").child("name_table").setValue(tableName);
 
         mDatabaseRef = mRootRef
                 .child(TRANSACTION)
-                .child(idRestaurant)
+                .child(restaurantId)
                 .child(tableId)
                 .child(timeStampTransaction)
                 .child(timeStampOrderMenu);
@@ -365,7 +366,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     public void replaceFragment(Fragment fragment) {
 
         ArrayList<String> listMenu = new ArrayList<>(listTimeStampOrderMenu);
-        bundle.putString(ID_RESTAURANT, idRestaurant);
+        bundle.putString(ID_RESTAURANT, restaurantId);
         bundle.putString("TableId", tableId);
         bundle.putString("TableName", tableName);
         bundle.putString("Transaction", timeStampTransaction);
