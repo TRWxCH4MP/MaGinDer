@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trw.maginder.R;
+import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.activity.MenuActivity;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
@@ -83,9 +84,9 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     private Button buttonCancel;
     private EditText editTextCustomerNum;
 
-    private String name;
-    private String type;
-    private String idRestaurant;
+    private String employeeName;
+    private String employeeType;
+    private String restaurantId;
     private String popupState;
     private String zoneId;
     private String tableId;
@@ -111,12 +112,6 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        try {
-//            callbackState = (OnCallbackState) context;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(context.toString()
-//                    + " must implement OnCallbackState ");
-//        }
     }
 
     @Override
@@ -124,12 +119,14 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
         super.onCreate(savedInstanceState);
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        idRestaurant = sharedPreferences.getString(ID_RESTAURANT, null);
-        name = sharedPreferences.getString(NAME, null);
-        type = sharedPreferences.getString(TYPE, null);
+        restaurantId = sharedPreferences.getString(StaticStringHelper.RESTAURANT_ID, null);
+        employeeName = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_NAME, null);
+        employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
+
+
         intent = new Intent(getContext(), MenuActivity.class);
 
-        if (idRestaurant != null) {
+        if (restaurantId != null) {
             createTableZone();
         }
     }
@@ -175,6 +172,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
         dialog.show();
         this.zoneId = zoneId;
         popupState = tableState;
+        this.tableId = tableId;
 
         if (tableState.equals("true")) {
             int time = (int) (new Date().getTime() / 1000);
@@ -218,7 +216,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     }
 
     private void createTableZone() {
-        Call<TableItemCollectionDao> call = HttpManagerTable.getInstance().getService().repos(idRestaurant);
+        Call<TableItemCollectionDao> call = HttpManagerTable.getInstance().getService().repos(restaurantId);
         call.enqueue(new Callback<TableItemCollectionDao>() {
             @Override
             public void onResponse(Call<TableItemCollectionDao> call, Response<TableItemCollectionDao> response) {
@@ -260,7 +258,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference()
                 .child("Table")
-                .child(idRestaurant)
+                .child(restaurantId)
                 .child(zoneId);
 
         databaseReference.addChildEventListener(new ChildEventListener() {
@@ -287,7 +285,6 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
                 } else {
                     Log.d(TAG, "onChildChanged: zone id not match !");
                 }
-
 
             }
 
@@ -400,7 +397,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
         final DatabaseReference databaseReference =
                 database.getReference()
                         .child(REF_FIREBASE_CHILD_TABLE)
-                        .child(idRestaurant)
+                        .child(restaurantId)
                         .child(zoneId);
 
         databaseReference.orderByChild("Id_table").equalTo(tableId)
@@ -420,5 +417,6 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
                     }
                 });
     }
+
 
 }

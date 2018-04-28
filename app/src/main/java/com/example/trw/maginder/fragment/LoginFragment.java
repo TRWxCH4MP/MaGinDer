@@ -99,7 +99,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         if (loginInvalid(username, password)) {
             login(username, password);
         } else {
-            Toast.makeText(getContext(), R.string.error_form_invalid, Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.error_form_invalid));
         }
     }
 
@@ -117,7 +117,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     LoginItemDao dao = response.body();
                     verifyLogin(dao);
                 } else {
-                    Toast.makeText(getContext(), response.errorBody().toString(), Toast.LENGTH_SHORT).show();
+                    showToast(response.errorBody().toString());
                 }
             }
 
@@ -130,13 +130,17 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private void verifyLogin(LoginItemDao dao) {
         if (dao.isStatus()) {
-            Toast.makeText(getContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.login_success));
             verifyStatus(dao);
             progressDialog.dismiss();
         } else {
-            Toast.makeText(getContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.login_failure));
             progressDialog.dismiss();
         }
+    }
+
+    private void showToast(String text) {
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
     private void verifyStatus(LoginItemDao dao) {
