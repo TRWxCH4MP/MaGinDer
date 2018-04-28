@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.trw.maginder.create_item.CreateDrawerMenu;
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.callback.OnChooseMenu;
@@ -79,7 +78,6 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     private static final String STATUS_WAITING_VERIFY = "รอการยืนยัน";
     private static final String STATUS_IN_PROCEED = "กำลังดำเนินการ";
 
-    private CreateDrawerMenu createDrawer;
     private ImageView imageViewDrawerMenu;
     private TabLayout tabLayout;
     private TextView textViewOrderTotal;

@@ -111,12 +111,12 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            callbackState = (OnCallbackState) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnCallbackState ");
-        }
+//        try {
+//            callbackState = (OnCallbackState) context;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(context.toString()
+//                    + " must implement OnCallbackState ");
+//        }
     }
 
     @Override
@@ -420,6 +420,5 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
                     }
                 });
     }
-
 
 }
