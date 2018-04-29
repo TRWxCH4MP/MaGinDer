@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OnChooseMenu {
 
-    void onChooseMenu(String menuId, String timeStampOrderMenu);
+    void ChooseMenuCallback(String menuId, String timeStampOrderMenu);
 
     void onMenuAmount(int menuCount);
 }

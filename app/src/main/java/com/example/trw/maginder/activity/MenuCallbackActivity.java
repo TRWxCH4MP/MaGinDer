@@ -1,6 +1,5 @@
 package com.example.trw.maginder.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,8 +18,8 @@ import android.widget.TextView;
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.adapter.MainAdapter;
+import com.example.trw.maginder.callback.FragmentCallback;
 import com.example.trw.maginder.callback.OnChooseMenu;
-import com.example.trw.maginder.callback.OnFragmentCallback;
 import com.example.trw.maginder.db.DeleteData;
 import com.example.trw.maginder.db.QueryData;
 import com.example.trw.maginder.db.callback.OnStateCallback;
@@ -28,19 +27,13 @@ import com.example.trw.maginder.db.callback.SendListDataCallback;
 import com.example.trw.maginder.db.entity.MenuEntity;
 import com.example.trw.maginder.fragment.AllMenuFragment;
 import com.example.trw.maginder.fragment.PreOrderFragment;
-import com.example.trw.maginder.fragment.PreOrderedFragment;
 import com.example.trw.maginder.fragment.PreOrderedMenuFragment;
 import com.example.trw.maginder.service.dao.RestaurantItemCollectionDao;
 import com.example.trw.maginder.service.dao.RestaurantItemDao;
 import com.example.trw.maginder.service.dao.RestaurantMenuTypeItemCollectionDao;
 import com.example.trw.maginder.service.http_manger.HttpManagerMenu;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -57,7 +50,7 @@ import java.util.List;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MenuActivity extends AppCompatActivity implements View.OnClickListener, OnChooseMenu, OnFragmentCallback {
+public class MenuActivity extends AppCompatActivity implements View.OnClickListener, OnChooseMenu, FragmentCallback {
     private static final String TAG = "MenuActivity";
     private static final String PREF_NAME = "PREF_NAME";
     private static final String NAME = "name";
@@ -275,13 +268,13 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
 
 
     @Override
-    public void onChooseMenu(String menuId, String timeStampOrderMenu) {
-        Log.d(TAG, "onChooseMenu: ");
+    public void ChooseMenuCallback(String menuId, String timeStampOrderMenu) {
+        Log.d(TAG, "ChooseMenuCallback: ");
         this.timeStampOrderMenu = timeStampOrderMenu;
         listTimeStampOrderMenu.add(timeStampOrderMenu);
-        Log.d(TAG, "onChooseMenu: ");
-        Log.d(TAG, "onChooseMenu: " + listTimeStampOrderMenu.size());
-        Log.d(TAG, "onChooseMenu: " + menuId);
+        Log.d(TAG, "ChooseMenuCallback: ");
+        Log.d(TAG, "ChooseMenuCallback: " + listTimeStampOrderMenu.size());
+        Log.d(TAG, "ChooseMenuCallback: " + menuId);
         getPreOrderMenuAmount();
     }
 
