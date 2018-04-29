@@ -64,15 +64,21 @@ import retrofit2.Response;
  */
 public class TableFragment extends Fragment implements TabLayout.OnTabSelectedListener, View.OnClickListener {
     private static final String PREF_NAME = "PREF_NAME";
-    private static final String NAME = "name";
-    private static final String TYPE = "type";
-    private static final String ID_RESTAURANT = "id_restaurant";
     private static final String TAG = "ManageTableActivity";
     private static final String REF_FIREBASE_CHILD_TABLE = "Table";
     private static final String STATE_TRUE = "true";
     private static final String STATE_FALSE = "false";
     private static final String REF_FIREBASE_CHILD_STATUS = "Status";
-    private static final String RESTAURANT_NAME = "restaurantName";
+
+    private String employeeName;
+    private String employeeType;
+    private String restaurantId;
+    private String popupState;
+    private String zoneId;
+    private String tableId;
+    private List<String> listTabLayoutZone = new ArrayList<>();
+    private List<String> listZoneId = new ArrayList<>();
+    private List<CreateTableItem> listTable = new ArrayList<>();
 
     private Dialog dialog;
     private TextView textViewOpenTable;
@@ -83,22 +89,10 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     private Button buttonOk;
     private Button buttonCancel;
     private EditText editTextCustomerNum;
-
-    private String employeeName;
-    private String employeeType;
-    private String restaurantId;
-    private String popupState;
-    private String zoneId;
-    private String tableId;
-
     private RecyclerView recyclerViewTable;
     private MainAdapter adapter;
     private TableItemCollectionDao listTableCollection;
-    private List<String> listTabLayoutZone = new ArrayList<>();
     private TabLayout tabLayout;
-
-    private List<String> listZoneId = new ArrayList<>();
-    private List<CreateTableItem> listTable = new ArrayList<>();
 
     private Intent intent;
 
@@ -171,8 +165,8 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     private void showPopup(String zoneId, String tableId, String tableName, String tableState) {
         dialog.show();
         this.zoneId = zoneId;
-        popupState = tableState;
         this.tableId = tableId;
+        popupState = tableState;
 
         if (tableState.equals("true")) {
             int time = (int) (new Date().getTime() / 1000);
