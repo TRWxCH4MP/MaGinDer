@@ -54,55 +54,32 @@ import retrofit2.Response;
 public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelectedListener, View.OnClickListener {
     private static final String TAG = "AllMenuFragment";
     private static final String PREF_NAME = "PREF_NAME";
-    private static final String NAME = "name";
-    private static final String TYPE = "type";
-    private static final String ID_RESTAURANT = "id_restaurant";
     private static final String IMAGE_URL = "http://it2.sut.ac.th/prj60_g14/Project/menu_img/";
-    private static final String TRANSACTION = "Transaction";
-    private static final String ORDER_DATE = "date";
-    private static final String ORDER_TRANSACTION_ID = "id";
-    private static final String ORDER_MENU_ID = "id_menu";
-    private static final String ORDER_KITCHEN_ID = "id_zone";
-    private static final String ORDER_IMAGE = "img";
-    private static final String ORDER_NAME = "name";
-    private static final String ORDER_PRICE = "price";
-    private static final String ORDER_STATUS = "status";
-    private static final String STATUS_WAITING_VERIFY = "รอการยืนยัน";
-    private static final String STATUS_IN_PROCEED = "กำลังดำเนินการ";
 
+    private String restaurantId;
     private String employeeName;
     private String employeeType;
-    private String restaurantId;
     private String tableId;
     private String transaction;
     private String tableName;
-
-    private RestaurantMenuTypeItemCollectionDao menuTypeDao;
-    private List<String> listTabLayoutMenu = new ArrayList<>();
-    private List<RestaurantItemDao> listRestaurant;
-    private RestaurantItemCollectionDao menuDao;
-    private List<String> listMenuId = new ArrayList<>();
-    private List<String> listPreOrderMenu = new ArrayList<>();
-
-    private TabLayout tabLayout;
-    private RecyclerView recyclerView;
-    private MainAdapter adapter;
-    private TextView textViewOrderTotal;
-    private RelativeLayout iconCart;
-    private Button btnVerifyOrderMenu;
-
-    private OnChooseMenu onChooseMenu;
-    private OnFragmentCallback onFragmentCallback;
-
     private String timeStampOrderMenu;
 
-    private DatabaseReference mDatabaseRef;
-    private DatabaseReference mRootRef;
+    private List<String> listTabLayoutMenu = new ArrayList<>();
+    private List<RestaurantItemDao> listRestaurant;
+    private List<String> listMenuId = new ArrayList<>();
 
-    private List<String> listPreOrderMenuAmount = new ArrayList<>();
-
+    private RelativeLayout iconCart;
+    private TextView textViewOrderTotal;
+    private RecyclerView recyclerView;
+    private TabLayout tabLayout;
     private ProgressDialog progressDialog;
+    private Button btnVerifyOrderMenu;
 
+    private RestaurantMenuTypeItemCollectionDao menuTypeDao;
+    private RestaurantItemCollectionDao menuDao;
+    private MainAdapter adapter;
+    private OnChooseMenu onChooseMenu;
+    private OnFragmentCallback onFragmentCallback;
 
     public AllMenuFragment() {
         // Required empty public constructor
@@ -144,8 +121,6 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
             getDataRestaurantMenuType();
         }
 
-//        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mMessageReceiver,
-//                new IntentFilter("MenuId"));
     }
 
     @Override
@@ -172,25 +147,6 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
             }
         });
     }
-
-//    public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            final String menuId = intent.getStringExtra("Id");
-//
-//            int time = (int) (new Date().getTime() / 1000);
-//            timeStampOrderMenu = "MT-" + time;
-//
-//            listMenuId.add(timeStampOrderMenu);
-//            Log.d(TAG, "onReceive: ");
-//
-//            onChooseMenu.onChooseMenu(menuId, timeStampOrderMenu);
-//            onChooseMenu.onMenuAmount(listMenuId.size());
-//
-//            getMenuAllDetail(menuId);
-//        }
-//    };
-
 
     private void getMenuAllDetail(final String menuId) {
         Log.d(TAG, "getMenuAllDetail: ");
