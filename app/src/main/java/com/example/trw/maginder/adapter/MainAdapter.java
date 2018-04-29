@@ -24,6 +24,7 @@ import com.example.trw.maginder.adapter.item.PreOrderedUserNameItem;
 import com.example.trw.maginder.adapter.item.TableItem;
 import com.example.trw.maginder.callback.ItemClickListener;
 import com.example.trw.maginder.callback.OnCallbackMenu;
+import com.example.trw.maginder.callback.OnCallbackPrimaryKeyMenu;
 import com.example.trw.maginder.callback.OnCallbackTable;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class MainAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private OnCallbackTable callbackTable;
     private OnCallbackMenu callbackMenu;
+    private OnCallbackPrimaryKeyMenu callbackPrimaryKey;
 
     private static String TAG = "MainAdapter";
 
@@ -48,6 +50,10 @@ public class MainAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public MainAdapter(OnCallbackMenu callbackMenu) {
         this.callbackMenu = callbackMenu;
+    }
+
+    public MainAdapter (OnCallbackPrimaryKeyMenu callbackPrimaryKey) {
+        this.callbackPrimaryKey = callbackPrimaryKey;
     }
 
     public MainAdapter() {
@@ -145,16 +151,10 @@ public class MainAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     private void setupPreOrderMenuOnClick(View view, int viewId, PreOrderMenuViewHolder holder, int position, String primaryId, int preOrderAmount) {
-//        int listPreOrderAmount;
-//        Intent intent = new Intent("PreOrderMenuId");
-//        intent.putExtra("menuId", menuId);
-//        LocalBroadcastManager.getInstance(view.getContext()).sendBroadcast(intent);
         Log.d(TAG, "setupPreOrderMenuOnClick: " + primaryId);
         if (viewId == R.id.btn_remove_pre_order_menu) {
             removeAt(position);
-            Intent intentRemove = new Intent("RemovePreOrderMenuId");
-            intentRemove.putExtra("primaryId", primaryId);
-            LocalBroadcastManager.getInstance(view.getContext()).sendBroadcast(intentRemove);
+            callbackPrimaryKey.onCallbackPrimaryKeyMenu(primaryId);
         }
     }
 
@@ -190,12 +190,6 @@ public class MainAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             public void onClickChooseTable(View view, int viewId, String tableId, String zoneId, String tableName, String tableState) {
                 if (viewId == R.id.card_view) {
                     callbackTable.onCallbackTableState(zoneId, tableId, tableName, tableState);
-//                    Intent intent = new Intent("ChooseTable");
-//                    intent.putExtra("TableId", tableId);
-//                    intent.putExtra("ZoneId", zoneId);
-//                    intent.putExtra("TableName", tableName);
-//                    intent.putExtra("TableState", tableState);
-//                    LocalBroadcastManager.getInstance(view.getContext()).sendBroadcast(intent);
                 }
             }
 
