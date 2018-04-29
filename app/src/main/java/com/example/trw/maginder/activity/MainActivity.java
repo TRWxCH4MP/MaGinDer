@@ -11,10 +11,10 @@ import android.os.Bundle;
 
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.StaticStringHelper;
-import com.example.trw.maginder.callback.OnFragmentCallback;
+import com.example.trw.maginder.callback.FragmentCallback;
 import com.example.trw.maginder.fragment.LoginFragment;
 
-public class MainActivity extends AppCompatActivity implements OnFragmentCallback {
+public class MainActivity extends AppCompatActivity implements FragmentCallback {
 
     private static final String TAG = "MainActivity";
     private String employeeType;

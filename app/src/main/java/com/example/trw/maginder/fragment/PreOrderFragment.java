@@ -3,17 +3,13 @@ package com.example.trw.maginder.fragment;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,24 +25,19 @@ import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
 import com.example.trw.maginder.adapter.item.PreOrderMenuItem;
-import com.example.trw.maginder.callback.OnCallbackPrimaryKeyMenu;
-import com.example.trw.maginder.callback.OnChooseMenu;
-import com.example.trw.maginder.callback.OnFragmentCallback;
-import com.example.trw.maginder.create_item.CreatePreOrderMenuItem;
-import com.example.trw.maginder.create_item.CreatePreOrderMenuItemCollection;
+import com.example.trw.maginder.callback.ChooseMenuCallback;
+import com.example.trw.maginder.callback.FragmentCallback;
+import com.example.trw.maginder.callback.PrimaryKeyMenuCallback;
 import com.example.trw.maginder.db.DeleteData;
 import com.example.trw.maginder.db.QueryData;
 import com.example.trw.maginder.db.callback.OnStateCallback;
 import com.example.trw.maginder.db.callback.SendListDataCallback;
 import com.example.trw.maginder.db.entity.MenuEntity;
-import com.example.trw.maginder.service.dao.OrderMenuItemDao;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -81,8 +72,8 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     private Button btnCancel;
     private ProgressDialog progressDialog;
 
-    private OnChooseMenu onChooseMenu;
-    private OnFragmentCallback callback;
+    private ChooseMenuCallback chooseMenuCallback;
+    private FragmentCallback callback;
 
     public PreOrderFragment() {
         // Required empty public constructor
@@ -92,11 +83,11 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            onChooseMenu = (OnChooseMenu) context;
-            callback = (OnFragmentCallback) context;
+            chooseMenuCallback = (ChooseMenuCallback) context;
+            callback = (FragmentCallback) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnChooseMenu or OnFragmentCallback or OnCallbackPrimaryKeyMenu");
+                    + " must implement ChooseMenuCallback or FragmentCallback or PrimaryKeyMenuCallback");
         }
     }
 
@@ -199,7 +190,7 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setupView() {
-        OnCallbackPrimaryKeyMenu callbackPrimaryKey = new OnCallbackPrimaryKeyMenu() {
+        PrimaryKeyMenuCallback callbackPrimaryKey = new PrimaryKeyMenuCallback() {
             @Override
             public void onCallbackPrimaryKeyMenu(String primaryKey) {
                 onDeletePreOrderMenu(primaryKey);
@@ -225,7 +216,7 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setupPreOrderMenuAmount(int preOrderMenuTotal) {
-        onChooseMenu.onMenuAmount(preOrderMenuTotal);
+        chooseMenuCallback.onMenuAmount(preOrderMenuTotal);
         if (preOrderMenuTotal < 10) {
             textViewMenuTotal.setText(String.valueOf("0" + preOrderMenuTotal));
         } else {

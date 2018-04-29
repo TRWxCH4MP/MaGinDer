@@ -1,6 +1,6 @@
 package com.example.trw.maginder.callback;
 
-public interface OnCallbackPrimaryKeyMenu {
+public interface PrimaryKeyMenuCallback {
 
     void onCallbackPrimaryKeyMenu(String primaryKey);
 }

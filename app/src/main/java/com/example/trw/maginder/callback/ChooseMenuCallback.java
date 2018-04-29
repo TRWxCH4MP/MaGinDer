@@ -6,7 +6,7 @@ import java.util.List;
  * Created by _TRW on 21/1/2561.
  */
 
-public interface OnChooseMenu {
+public interface ChooseMenuCallback {
 
     void ChooseMenuCallback(String menuId, String timeStampOrderMenu);
 

@@ -1,22 +1,13 @@
 package com.example.trw.maginder.adapter.holder;
 
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.adapter.holder.BaseViewHolder;
 import com.example.trw.maginder.callback.ItemClickListener;
-import com.example.trw.maginder.callback.OnCallbackOrderTotal;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by _TRW on 19/12/2560.

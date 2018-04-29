@@ -13,19 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.activity.ManageTableActivity;
-import com.example.trw.maginder.callback.OnFragmentCallback;
-import com.example.trw.maginder.db.entity.EmployeeEntity;
-import com.example.trw.maginder.db.entity.MenuEntity;
 import com.example.trw.maginder.service.http_manger.HttpManager;
 import com.example.trw.maginder.service.dao.LoginItemDao;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;

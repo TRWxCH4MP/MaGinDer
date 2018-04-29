@@ -1,6 +1,5 @@
 package com.example.trw.maginder.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.StaticStringHelper;
-import com.example.trw.maginder.callback.OnCallbackState;
 import com.example.trw.maginder.fragment.ManageOrderFragment;
 import com.example.trw.maginder.fragment.TableFragment;
 import com.mikepenz.materialdrawer.AccountHeader;

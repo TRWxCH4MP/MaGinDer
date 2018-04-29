@@ -18,8 +18,8 @@ import android.widget.TextView;
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.adapter.MainAdapter;
+import com.example.trw.maginder.callback.ChooseMenuCallback;
 import com.example.trw.maginder.callback.FragmentCallback;
-import com.example.trw.maginder.callback.OnChooseMenu;
 import com.example.trw.maginder.db.DeleteData;
 import com.example.trw.maginder.db.QueryData;
 import com.example.trw.maginder.db.callback.OnStateCallback;
@@ -50,45 +50,18 @@ import java.util.List;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MenuActivity extends AppCompatActivity implements View.OnClickListener, OnChooseMenu, FragmentCallback {
+public class MenuActivity extends AppCompatActivity implements View.OnClickListener, ChooseMenuCallback, FragmentCallback {
     private static final String TAG = "MenuActivity";
     private static final String PREF_NAME = "PREF_NAME";
-    private static final String NAME = "name";
-    private static final String TYPE = "type";
     private static final String ID_RESTAURANT = "id_restaurant";
-    private static final String LIST_MENU = "listMenu";
-    private static final String TRANSACTION = "Transaction";
-    private static final String TRANSACTION_USER_NAME = "name_user";
-    private static final String TRANSACTION_STATUS = "status";
-    private static final String TRANSACTION_TIMESTAMP = "timestamp";
-    private static final String ORDER_DATE = "date";
-    private static final String ORDER_TRANSACTION_ID = "id";
-    private static final String ORDER_MENU_ID = "id_menu";
-    private static final String ORDER_KITCHEN_ID = "id_zone";
-    private static final String ORDER_IMAGE = "img";
-    private static final String ORDER_NAME = "name";
-    private static final String ORDER_PRICE = "price";
-    private static final String ORDER_STATUS = "status";
-    private static final String STATUS_WAITING_VERIFY = "รอการยืนยัน";
-    private static final String STATUS_IN_PROCEED = "กำลังดำเนินการ";
 
     private ImageView imageViewDrawerMenu;
-    private TabLayout tabLayout;
-    private TextView textViewOrderTotal;
     private String employeeName;
     private String employeeType;
     private String restaurantId;
     private String tableId;
     private String timeStampTransaction;
     private String tableName;
-
-    private RecyclerView recyclerView;
-    private MainAdapter adapter;
-
-    private List<String> listTabLayoutMenu = new ArrayList<>();
-    private List<RestaurantItemDao> listRestaurant;
-    private RestaurantItemCollectionDao menuDao;
-    private RestaurantMenuTypeItemCollectionDao menuTypeDao;
 
     private Drawer drawer;
     private PrimaryDrawerItem itemTable;
@@ -101,8 +74,6 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     private DatabaseReference mRootRef;
     private String timeStampOrderMenu;
     private ArrayList<String> listTimeStampOrderMenu = new ArrayList<>();
-
-    private List<String> listPreOrderMenu = new ArrayList<>();
 
     private Bundle bundle;
 
@@ -296,58 +267,6 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void getMenuAllDetail(final String menuId) {
-        Log.d(TAG, "getMenuAllDetail: ");
-        retrofit2.Call<RestaurantItemCollectionDao> call = HttpManagerMenu.getInstance().getService().repos(menuId);
-        call.enqueue(new Callback<RestaurantItemCollectionDao>() {
-            @Override
-            public void onResponse(retrofit2.Call<RestaurantItemCollectionDao> call, Response<RestaurantItemCollectionDao> response) {
-                if (response.isSuccessful()) {
-                    RestaurantItemCollectionDao dao = response.body();
-                    Log.d(TAG, "onResponse: success");
-//                    setPreOrderMenuToFirebase(dao.getData());
-                } else {
-                    Log.d(TAG, "onResponse: failure");
-                }
-            }
-
-            @Override
-            public void onFailure(retrofit2.Call<RestaurantItemCollectionDao> call, Throwable t) {
-                Log.d(TAG, "onFailure: " + t.toString());
-            }
-        });
-    }
-
-    private void setPreOrderMenuToFirebase(List<RestaurantItemDao> data) {
-
-        mDatabaseRef = mRootRef
-                .child(TRANSACTION)
-                .child(restaurantId)
-                .child(tableId);
-
-        mDatabaseRef.child("data").child("name_table").setValue(tableName);
-
-        mDatabaseRef = mRootRef
-                .child(TRANSACTION)
-                .child(restaurantId)
-                .child(tableId)
-                .child(timeStampTransaction)
-                .child(timeStampOrderMenu);
-
-        for (int index = 0; index < data.size(); index++) {
-            mDatabaseRef.child(ORDER_DATE).setValue(data.get(index).getDate());
-            mDatabaseRef.child(ORDER_TRANSACTION_ID).setValue(timeStampTransaction);
-            mDatabaseRef.child(ORDER_MENU_ID).setValue(data.get(index).getIdMenu());
-            mDatabaseRef.child(ORDER_KITCHEN_ID).setValue(data.get(index).getIdKitchen());
-            mDatabaseRef.child(ORDER_IMAGE).setValue(data.get(index).getImg());
-            mDatabaseRef.child(ORDER_NAME).setValue(data.get(index).getName());
-            mDatabaseRef.child(ORDER_PRICE).setValue(data.get(index).getPrice());
-            mDatabaseRef.child(ORDER_STATUS).setValue(STATUS_IN_PROCEED);
-        }
-        Log.d(TAG, "setPreOrderMenuToFirebase: success");
-        getPreOrderMenuAmount();
-    }
-
     @Override
     public void onFragmentCallback(Fragment fragment) {
         Log.d(TAG, "onFragmentCallback: " + listTimeStampOrderMenu.size());
@@ -369,8 +288,6 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.contentContainer, fragment);
         transaction.commit();
-
     }
-
 
 }

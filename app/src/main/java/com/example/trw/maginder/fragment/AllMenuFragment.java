@@ -24,9 +24,9 @@ import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
 import com.example.trw.maginder.adapter.item.MenuItem;
-import com.example.trw.maginder.callback.OnCallbackMenu;
-import com.example.trw.maginder.callback.OnChooseMenu;
-import com.example.trw.maginder.callback.OnFragmentCallback;
+import com.example.trw.maginder.callback.ChooseMenuCallback;
+import com.example.trw.maginder.callback.FragmentCallback;
+import com.example.trw.maginder.callback.MenuCallback;
 import com.example.trw.maginder.db.InsertData;
 import com.example.trw.maginder.db.QueryData;
 import com.example.trw.maginder.db.callback.OnStateCallback;
@@ -38,7 +38,6 @@ import com.example.trw.maginder.service.dao.RestaurantMenuTypeItemCollectionDao;
 import com.example.trw.maginder.service.http_manger.HttpManagerMenu;
 import com.example.trw.maginder.service.http_manger.HttpManagerRestaurant;
 import com.example.trw.maginder.service.http_manger.HttpManagerRestaurantMenuType;
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,8 +77,8 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     private RestaurantMenuTypeItemCollectionDao menuTypeDao;
     private RestaurantItemCollectionDao menuDao;
     private MainAdapter adapter;
-    private OnChooseMenu onChooseMenu;
-    private OnFragmentCallback onFragmentCallback;
+    private ChooseMenuCallback chooseMenuCallback;
+    private FragmentCallback onFragmentCallback;
 
     public AllMenuFragment() {
         // Required empty public constructor
@@ -90,11 +89,11 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            onChooseMenu = (OnChooseMenu) context;
-            onFragmentCallback = (OnFragmentCallback) context;
+            chooseMenuCallback = (ChooseMenuCallback) context;
+            onFragmentCallback = (FragmentCallback) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnChooseMenu or OnFragmentCallback");
+                    + " must implement ChooseMenuCallback or FragmentCallback");
         }
     }
 
@@ -333,7 +332,7 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     }
 
     public void setupView() {
-        OnCallbackMenu callbackMenu = new OnCallbackMenu() {
+        MenuCallback callbackMenu = new MenuCallback() {
             @Override
             public void onCallbackMenu(String menuId) {
 //                Toast.makeText(getContext(), menuId, Toast.LENGTH_SHORT).show();
@@ -355,8 +354,8 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
         listMenuId.add(timeStampOrderMenu);
         Log.d(TAG, "onReceive: ");
 
-        onChooseMenu.onChooseMenu(menuId, timeStampOrderMenu);
-//        onChooseMenu.onMenuAmount(listMenuId.size());
+        chooseMenuCallback.ChooseMenuCallback(menuId, timeStampOrderMenu);
+//        ChooseMenuCallback.onMenuAmount(listMenuId.size());
 
         getMenuAllDetail(menuId);
     }

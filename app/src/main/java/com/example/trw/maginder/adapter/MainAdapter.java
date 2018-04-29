@@ -1,7 +1,5 @@
 package com.example.trw.maginder.adapter;
 
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,9 +21,9 @@ import com.example.trw.maginder.adapter.item.PreOrderedMenuItem;
 import com.example.trw.maginder.adapter.item.PreOrderedUserNameItem;
 import com.example.trw.maginder.adapter.item.TableItem;
 import com.example.trw.maginder.callback.ItemClickListener;
-import com.example.trw.maginder.callback.OnCallbackMenu;
-import com.example.trw.maginder.callback.OnCallbackPrimaryKeyMenu;
-import com.example.trw.maginder.callback.OnCallbackTable;
+import com.example.trw.maginder.callback.MenuCallback;
+import com.example.trw.maginder.callback.PrimaryKeyMenuCallback;
+import com.example.trw.maginder.callback.TableCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,23 +34,23 @@ import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
-    private OnCallbackTable callbackTable;
-    private OnCallbackMenu callbackMenu;
-    private OnCallbackPrimaryKeyMenu callbackPrimaryKey;
+    private TableCallback callbackTable;
+    private MenuCallback callbackMenu;
+    private PrimaryKeyMenuCallback callbackPrimaryKey;
 
     private static String TAG = "MainAdapter";
 
     private List<BaseItem> itemList = new ArrayList<>();
 
-    public MainAdapter(OnCallbackTable callbackTable) {
+    public MainAdapter(TableCallback callbackTable) {
         this.callbackTable = callbackTable;
     }
 
-    public MainAdapter(OnCallbackMenu callbackMenu) {
+    public MainAdapter(MenuCallback callbackMenu) {
         this.callbackMenu = callbackMenu;
     }
 
-    public MainAdapter (OnCallbackPrimaryKeyMenu callbackPrimaryKey) {
+    public MainAdapter (PrimaryKeyMenuCallback callbackPrimaryKey) {
         this.callbackPrimaryKey = callbackPrimaryKey;
     }
 

@@ -1,16 +1,11 @@
 package com.example.trw.maginder.adapter.holder;
 
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.callback.ItemClickListener;
-import com.example.trw.maginder.callback.OnCallbackTable;
 
 /**
  * Created by _TRW on 16/1/2561.
