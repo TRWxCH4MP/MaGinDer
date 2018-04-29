@@ -29,6 +29,7 @@ import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
 import com.example.trw.maginder.adapter.item.PreOrderMenuItem;
+import com.example.trw.maginder.callback.OnCallbackPrimaryKeyMenu;
 import com.example.trw.maginder.callback.OnChooseMenu;
 import com.example.trw.maginder.callback.OnFragmentCallback;
 import com.example.trw.maginder.create_item.CreatePreOrderMenuItem;
@@ -55,52 +56,33 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "PreOrderFragment";
     private static final String PREF_NAME = "PREF_NAME";
-    private static final String NAME = "name";
-    private static final String TYPE = "type";
     private static final String ID_RESTAURANT = "id_restaurant";
-    private static final String LIST_MENU = "listMenu";
     private static final String IMAGE_URL = "http://it2.sut.ac.th/prj60_g14/Project/menu_img/";
     private static final String TRANSACTION = "Transaction";
-    private static final String STATUS_WAITING_VERIFY = "รอการยืนยัน";
     private static final String STATUS_IN_PROCEED = "กำลังดำเนินการ";
 
     private String employeeName;
-    private RecyclerView recyclerView;
-    private TextView textViewMenuTotal;
-    private TextView textViewMenuTotalPrice;
-    private Button btnAddOrder;
-    private MainAdapter adapter;
-    private Button btnVerifyOrderMenu;
-
-    private OnChooseMenu onChooseMenu;
-    private OnFragmentCallback callback;
-
-    private List<String> orderMenu = new ArrayList<>();
-    private int preOrderMenuAmount = 0;
-    private List<MenuEntity> listPreOrderMenu = new ArrayList<>();
     private String restaurantId;
     private String tableId;
     private String transaction;
     private String tableName;
-    private ArrayList<String> transactionMenu;
-    private List<CreatePreOrderMenuItem> listPreOrder = new ArrayList<>();
-    private List<Integer> listPreOrderMenuAmountAndTotalPrice = new ArrayList<>();
-    private List<String> listOrderMenu = new ArrayList<>();
 
+    private ArrayList<String> transactionMenu;
+    private List<MenuEntity> listPreOrderMenu = new ArrayList<>();
+
+    private RecyclerView recyclerView;
+    private TextView textViewMenuTotal;
+    private TextView textViewMenuTotalPrice;
+    private Button btnAddOrder;
+    private Button btnVerifyOrderMenu;
+    private MainAdapter adapter;
     private Dialog dialog;
     private Button btnOk;
     private Button btnCancel;
-
-    private List<String> listMenuId = new ArrayList<>();
-    private List<String> listMenuName = new ArrayList<>();
-    private List<String> listMenuImg = new ArrayList<>();
-    private List<String> listMenuPrice = new ArrayList<>();
-    private List<String> listMenuStatus = new ArrayList<>();
-
     private ProgressDialog progressDialog;
 
-    private List<CreatePreOrderMenuItemCollection> list = new ArrayList<>();
-    private int totalPrice = 0;
+    private OnChooseMenu onChooseMenu;
+    private OnFragmentCallback callback;
 
     public PreOrderFragment() {
         // Required empty public constructor
@@ -114,7 +96,7 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
             callback = (OnFragmentCallback) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnChooseMenu or OnFragmentCallback");
+                    + " must implement OnChooseMenu or OnFragmentCallback or OnCallbackPrimaryKeyMenu");
         }
     }
 
@@ -141,12 +123,6 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
             }
 
         }
-
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mMessageReceiver,
-                new IntentFilter("ListPreOrderMenu"));
-
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mMessageReceiver2,
-                new IntentFilter("RemovePreOrderMenuId"));
     }
 
     @Override
@@ -223,54 +199,29 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setupView() {
+        OnCallbackPrimaryKeyMenu callbackPrimaryKey = new OnCallbackPrimaryKeyMenu() {
+            @Override
+            public void onCallbackPrimaryKeyMenu(String primaryKey) {
+                onDeletePreOrderMenu(primaryKey);
+            }
+        };
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()
                 , LinearLayoutManager.VERTICAL
                 , false));
-        adapter = new MainAdapter();
+        adapter = new MainAdapter(callbackPrimaryKey);
         recyclerView.setAdapter(adapter);
     }
 
-
-    private void preOrderMenuToTalPrice(List<String> listMenuPrice) {
-        int totalPrice = 0;
-        for (int index = 0; index < listMenuPrice.size(); index++) {
-            totalPrice = totalPrice + Integer.parseInt(listMenuPrice.get(index));
-        }
-        textViewMenuTotalPrice.setText(String.valueOf(totalPrice) + " บาท");
-    }
-
-    private void createItemPreOrder() {
-        List<String> listOrderMenu = new ArrayList<>();
-        List<Integer> listOrderMenuAmount = new ArrayList<>();
-        List<String> order = new ArrayList<>();
-        HashSet<String> uniqueValues = new HashSet<>(orderMenu);
-
-//        for (String values : uniqueValues) {
-//            listOrderMenu.add(values);
-//            listOrderMenuAmount.add(Collections.frequency(orderMenu, values));
-//        }
-//
-//        for (int index = 0; index < listOrderMenuAmount.size(); index++) {
-//            Log.d(TAG, "createItemPreOrder: " + listOrderMenuAmount.get(index) + "\n" + listOrderMenu.get(index));
-//        }
-
-        List<BaseItem> itemList = new ArrayList<>();
-
-        for (int index = 0; index < listMenuId.size(); index++) {
-            if (listMenuStatus.get(index).equals(STATUS_IN_PROCEED)) {
-                itemList.add(new PreOrderMenuItem()
-                        .setPreOrderMenuId(listMenuId.get(index))
-                        .setPreOrderMenuName(listMenuName.get(index))
-                        .setPreOrderMenuImage(IMAGE_URL + listMenuImg.get(index))
-                        .setPreOrderMenuPrice(listMenuPrice.get(index) + " บาท")
-                        .setPreOrderMenuAmount(1)
-                );
+    private void onDeletePreOrderMenu(String primaryKeyMenu) {
+        DeleteData.onDeleteMenuById(getContext(), primaryKeyMenu, new OnStateCallback() {
+            @Override
+            public void stateCallback(boolean isSuccess) {
+                if (isSuccess) {
+                    updatePreOrderMenu();
+                }
             }
-        }
-
-        adapter.setItemList(itemList);
-        adapter.notifyDataSetChanged();
-
+        });
     }
 
     private void setupPreOrderMenuAmount(int preOrderMenuTotal) {
@@ -281,78 +232,6 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
             textViewMenuTotal.setText(String.valueOf(preOrderMenuTotal));
         }
     }
-
-    public void preOrderMenuAllAmount(List<Integer> priceAmount) {
-        int price = 0;
-        for (int index = 0; index < priceAmount.size(); index++) {
-            price = price + priceAmount.get(index);
-        }
-        textViewMenuTotalPrice.setText(String.valueOf(price + " บาท"));
-    }
-
-    public void createItem(final List<String> orderMenu, List<OrderMenuItemDao> dao) {
-        List<String> listOrderMenu = new ArrayList<>();
-        List<Integer> listOrderMenuAmount = new ArrayList<>();
-        HashSet<String> uniqueValues = new HashSet<>(orderMenu);
-
-//        calculatePreOrderMenuAllPrice(orderMenu, dao);
-
-        for (String values : uniqueValues) {
-            listOrderMenu.add(values);
-            listOrderMenuAmount.add(Collections.frequency(orderMenu, values));
-        }
-
-//        FetchItemPreOrderMenu(listOrderMenu, listOrderMenuAmount, dao);
-    }
-
-    private void calculatePreOrderMenuAllPrice(List<String> orderMenu, List<CreatePreOrderMenuItem> dao) {
-        final List<Integer> priceAmount = new ArrayList<>();
-
-        for (int index = 0; index < orderMenu.size(); index++) {
-            for (int index2 = 0; index2 < dao.size(); index2++) {
-                if (orderMenu.get(index).equals(dao.get(index2).getId_menu())) {
-                    priceAmount.add(Integer.parseInt(dao.get(index2).getPrice()));
-                }
-            }
-        }
-        preOrderMenuAllAmount(priceAmount);
-    }
-
-
-    public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            preOrderMenuAmount = intent.getIntExtra("listMenu", 0);
-
-            setupPreOrderMenuAmount(listPreOrderMenu.size());
-
-//            onChooseMenu.onChooseMenu(preOrderMenuAmount);
-
-        }
-
-    };
-
-    public BroadcastReceiver mMessageReceiver2 = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String primaryId = intent.getStringExtra("primaryId");
-
-            DeleteData.onDeleteMenuById(getContext(), primaryId, new OnStateCallback() {
-                @Override
-                public void stateCallback(boolean isSuccess) {
-                    if (isSuccess) {
-                        updatePreOrderMenu();
-                    } else {
-
-                    }
-                }
-            });
-//            listPreOrderMenu.add(menu);
-
-//            onChooseMenu.onChooseMenu(listPreOrderMenu.size());
-        }
-
-    };
 
     private void updatePreOrderMenu() {
         QueryData.onLoadMenu(getContext(), new SendListDataCallback() {
