@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.trw.maginder.R;
+import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
 import com.example.trw.maginder.adapter.item.PreOrderMenuItem;
@@ -63,7 +64,7 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     private static final String STATUS_WAITING_VERIFY = "รอการยืนยัน";
     private static final String STATUS_IN_PROCEED = "กำลังดำเนินการ";
 
-    private String userName;
+    private String employeeName;
     private RecyclerView recyclerView;
     private TextView textViewMenuTotal;
     private TextView textViewMenuTotalPrice;
@@ -77,7 +78,7 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     private List<String> orderMenu = new ArrayList<>();
     private int preOrderMenuAmount = 0;
     private List<MenuEntity> listPreOrderMenu = new ArrayList<>();
-    private String idRestaurant;
+    private String restaurantId;
     private String tableId;
     private String transaction;
     private String tableName;
@@ -122,12 +123,12 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        idRestaurant = sharedPreferences.getString(ID_RESTAURANT, null);
-        userName = sharedPreferences.getString(NAME, null);
+        restaurantId = sharedPreferences.getString(StaticStringHelper.RESTAURANT_ID, null);
+        employeeName = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_NAME, null);
 
         if (getArguments() != null) {
 //            orderMenu = new ArrayList<>(getArguments().getStringArrayList(LIST_MENU));
-            idRestaurant = getArguments().getString(ID_RESTAURANT);
+            restaurantId = getArguments().getString(ID_RESTAURANT);
             tableId = getArguments().getString("TableId");
             tableName = getArguments().getString("TableName");
             transaction = getArguments().getString("Transaction");
@@ -229,80 +230,6 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
         recyclerView.setAdapter(adapter);
     }
 
-//    private void createPreOrderMenu() {
-//        listPreOrder.clear();
-//        orderMenu.clear();
-//
-//        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        final DatabaseReference databaseReference = database.getReference()
-//                .child(TRANSACTION)
-//                .child(idRestaurant)
-//                .child(tableId)
-//                .child(transaction);
-//
-//        databaseReference.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                if (dataSnapshot.child("id_menu").getValue() != null
-//                        && dataSnapshot.child("name").getValue() != null
-//                        && dataSnapshot.child("price").getValue() != null
-//                        && dataSnapshot.child("img").getValue() != null
-//                        && dataSnapshot.child("status").getValue() != null) {
-//                    Log.d(TAG, "onChildAdded: " + dataSnapshot.child("id_menu").getValue());
-//                    Log.d(TAG, "onChildAdded: " + dataSnapshot.child("name").getValue());
-//                    Log.d(TAG, "onChildAdded: " + dataSnapshot.child("price").getValue());
-//                    Log.d(TAG, "onChildAdded: " + dataSnapshot.child("img").getValue());
-//                    Log.d(TAG, "onChildAdded: " + dataSnapshot.child("status").getValue());
-//                    orderMenu.add(String.valueOf(dataSnapshot.child("id_menu").getValue()));
-//                    listMenuId.add(String.valueOf(dataSnapshot.child("id_menu").getValue()));
-//                    listMenuName.add(String.valueOf(dataSnapshot.child("name").getValue()));
-//                    listMenuPrice.add(String.valueOf(dataSnapshot.child("price").getValue()));
-//                    listMenuImg.add(String.valueOf(dataSnapshot.child("img").getValue()));
-//                    listMenuStatus.add(String.valueOf(dataSnapshot.child("status").getValue()));
-//                }
-//                createItemPreOrder();
-//                preOrderMenuToTalPrice(listMenuPrice);
-//                textViewMenuTotal.setText(String.valueOf(orderMenu.size()));
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                Log.d(TAG, "onChildChanged: ");
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//                Log.d(TAG, "onChildRemoved: ");
-//                int listMenuPriceIsRemove = 0;
-//                if (dataSnapshot.child("price").getValue() != null) {
-//
-//                    listMenuPriceIsRemove = Integer.parseInt(String.valueOf(dataSnapshot.child("price").getValue()));
-//                }
-//
-//                if (totalPrice > 0) {
-//                    totalPrice = totalPrice - listMenuPriceIsRemove;
-//                    textViewMenuPriceTotal.setText(String.valueOf(totalPrice));
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.d(TAG, "onCancelled: " + databaseError.toString());
-//                Toast.makeText(getContext(), databaseError.toString(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        for (int index = 0; index < orderMenu.size(); index++) {
-//            Log.d(TAG, "createPreOrderMenu: " + orderMenu.get(index));
-//        }
-//
-//    }
 
     private void preOrderMenuToTalPrice(List<String> listMenuPrice) {
         int totalPrice = 0;
@@ -481,7 +408,7 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference databaseReference = database.getReference()
                             .child(TRANSACTION)
-                            .child(idRestaurant)
+                            .child(restaurantId)
                             .child(tableId)
                             .child(transaction);
 
@@ -504,7 +431,7 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
                         }
                     }
                     int timeStamp = (int) (new Date().getTime() / 1000);
-                    databaseReference.child("name_user").setValue(userName);
+                    databaseReference.child("name_user").setValue(employeeName);
                     databaseReference.child("status").setValue(STATUS_IN_PROCEED);
                     databaseReference.child("timestamp").setValue(String.valueOf(timeStamp));
 
