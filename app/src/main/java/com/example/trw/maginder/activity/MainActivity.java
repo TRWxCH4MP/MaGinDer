@@ -14,7 +14,7 @@ import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.callback.FragmentCallback;
 import com.example.trw.maginder.fragment.LoginFragment;
 
-public class MainActivity extends AppCompatActivity implements FragmentCallback {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private String employeeType;
@@ -53,22 +53,5 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         Intent intent = new Intent(context, activity);
         startActivity(intent);
         finish();
-    }
-
-    @Override
-    public void onFragmentCallback(Fragment fragment) {
-        replaceFragment(fragment);
-    }
-
-    public void replaceFragment(Fragment fragment) {
-        if (fragment == null) {
-            Intent intent = new Intent(this, ManageTableActivity.class);
-            startActivity(intent);
-        } else {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.contentContainer, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
     }
 }
