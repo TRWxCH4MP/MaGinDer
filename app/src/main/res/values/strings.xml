@@ -19,5 +19,6 @@
     <string name="user">ผู้ใช้</string>
     <string name="total">รวม</string>
     <string name="table">โต๊ะ</string>
+    <string name="login_is_process">กำลังทำการล็อคอิน</string>
 
 </resources>
