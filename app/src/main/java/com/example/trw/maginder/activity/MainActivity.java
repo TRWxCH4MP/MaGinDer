@@ -4,21 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.StaticStringHelper;
-import com.example.trw.maginder.callback.FragmentCallback;
 import com.example.trw.maginder.fragment.LoginFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private String employeeType;
-    private boolean loginStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +30,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void onCheckLoginStatus() {
         SharedPreferences sharedPreferences = getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
-        loginStatus = sharedPreferences.getBoolean(StaticStringHelper.STATUS, false);
-        employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
+        boolean loginStatus = sharedPreferences.getBoolean(StaticStringHelper.STATUS, false);
+        String employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
 
         if (loginStatus) {
-            verifyEmployeeType();
+            userIsSignedIn(employeeType);
         }
     }
 
-    private void verifyEmployeeType() {
+    private boolean isEmployeeTypeInvalid(String employeeType) {
+        return employeeType != null;
+    }
+
+    private void userIsSignedIn(String employeeType) {
+        if (isEmployeeTypeInvalid(employeeType)) {
+            verifyEmployeeType(employeeType);
+        }
+    }
+
+    private void verifyEmployeeType(String employeeType) {
         if (employeeType.equals(StaticStringHelper.EMPLOYEE_TYPE)) {
             onStartActivityHelper(this, ManageTableActivity.class);
         }
