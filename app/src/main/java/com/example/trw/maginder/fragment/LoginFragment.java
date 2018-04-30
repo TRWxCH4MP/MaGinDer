@@ -1,6 +1,7 @@
 package com.example.trw.maginder.fragment;
 
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.trw.maginder.Contextor;
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.activity.ManageTableActivity;
@@ -37,7 +39,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private EditText etPassword;
 
     private ProgressDialog progressDialog;
-    private Intent intent;
 
     @Override
     public void onAttach(Context context) {
@@ -54,17 +55,36 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
-        boolean loginStatus = sharedPreferences.getBoolean("status", false);
-
-        if (loginStatus) {
-            intent = new Intent(getContext(), ManageTableActivity.class);
-            startActivity(intent);
-        }
-
+        userIsAuthentication();
         initializeUI(view);
 
         return view;
+    }
+
+    private void userIsAuthentication() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
+        boolean loginStatus = sharedPreferences.getBoolean(StaticStringHelper.STATUS, false);
+        String userType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
+
+        if (loginStatus) {
+            userIsSignedIn(userType);
+        }
+    }
+
+    private void userIsSignedIn(String userType) {
+        if (userIsInvalid(userType)) {
+            verifyUserType(userType);
+        }
+    }
+
+    private boolean userIsInvalid(String userType) {
+        return userType != null;
+    }
+
+    private void verifyUserType(String userType) {
+        if (userType.toLowerCase().equals(StaticStringHelper.TYPE_WAITRESS)) {
+            onStartActivityHelper(getContext(), ManageTableActivity.class);
+        }
     }
 
     private void initializeUI(View view) {
@@ -73,7 +93,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         etPassword = view.findViewById(R.id.et_password);
 
         progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("กำลังทำการล็อคอิน");
+        progressDialog.setMessage(getString(R.string.login_is_process));
         progressDialog.setCancelable(false);
 
         btnLogin.setOnClickListener(this);
@@ -88,6 +108,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             userLogin(username, password);
         }
     }
+
 
     private void userLogin(String username, String password) {
         if (loginInvalid(username, password)) {
@@ -152,11 +173,15 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             editor.putString(StaticStringHelper.RESTAURANT_NAME, dao.getRestaurantName());
             editor.commit();
 
-            intent = new Intent(getContext(), ManageTableActivity.class);
-            startActivity(intent);
+            onStartActivityHelper(getContext(), ManageTableActivity.class);
         } else if (dao.getType().toLowerCase().equals(StaticStringHelper.TYPE_CHEF)) {
             // do something
         }
+    }
+
+    private void onStartActivityHelper(Context context, Class<? extends Activity> activity) {
+        Intent intent = new Intent(context, activity);
+        startActivity(intent);
     }
 
 }
