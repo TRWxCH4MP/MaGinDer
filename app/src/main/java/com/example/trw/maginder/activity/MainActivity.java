@@ -25,38 +25,5 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.contentContainer, new LoginFragment())
                     .commit();
         }
-        onCheckLoginStatus();
-    }
-
-    private void onCheckLoginStatus() {
-        SharedPreferences sharedPreferences = getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
-        boolean loginStatus = sharedPreferences.getBoolean(StaticStringHelper.STATUS, false);
-        String employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
-
-        if (loginStatus) {
-            userIsSignedIn(employeeType);
-        }
-    }
-
-    private boolean isEmployeeTypeInvalid(String employeeType) {
-        return employeeType != null;
-    }
-
-    private void userIsSignedIn(String employeeType) {
-        if (isEmployeeTypeInvalid(employeeType)) {
-            verifyEmployeeType(employeeType);
-        }
-    }
-
-    private void verifyEmployeeType(String employeeType) {
-        if (employeeType.equals(StaticStringHelper.EMPLOYEE_TYPE)) {
-            onStartActivityHelper(this, ManageTableActivity.class);
-        }
-    }
-
-    private void onStartActivityHelper(Context context, Class<? extends Activity> activity) {
-        Intent intent = new Intent(context, activity);
-        startActivity(intent);
-        finish();
     }
 }
