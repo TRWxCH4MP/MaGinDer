@@ -4,13 +4,13 @@ import android.content.Context;
 
 public class Contextor {
 
-    private static Contextor instance;
+    private static Contextor INSTANCE;
 
     public static Contextor getInstance() {
-        if (instance == null) {
-            instance = new Contextor();
+        if (INSTANCE == null) {
+            INSTANCE = new Contextor();
         }
-        return instance;
+        return INSTANCE;
     }
 
     private Context mContext;
