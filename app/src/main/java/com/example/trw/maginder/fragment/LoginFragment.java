@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.trw.maginder.Contextor;
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.StaticStringHelper;
 import com.example.trw.maginder.activity.ManageTableActivity;
@@ -55,13 +54,25 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        userIsAuthentication();
+        getCurrentUser();
         initializeUI(view);
 
         return view;
     }
 
-    private void userIsAuthentication() {
+    private void initializeUI(View view) {
+        btnLogin = view.findViewById(R.id.btn_login);
+        etUsername = view.findViewById(R.id.et_username);
+        etPassword = view.findViewById(R.id.et_password);
+
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage(getString(R.string.login_is_process));
+        progressDialog.setCancelable(false);
+
+        btnLogin.setOnClickListener(this);
+    }
+
+    private void getCurrentUser() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
         boolean loginStatus = sharedPreferences.getBoolean(StaticStringHelper.STATUS, false);
         String userType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
@@ -81,24 +92,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         return userType != null;
     }
 
-    private void verifyUserType(String userType) {
-        if (userType.toLowerCase().equals(StaticStringHelper.TYPE_WAITRESS)) {
-            onStartActivityHelper(getContext(), ManageTableActivity.class);
-        }
-    }
-
-    private void initializeUI(View view) {
-        btnLogin = view.findViewById(R.id.btn_login);
-        etUsername = view.findViewById(R.id.et_username);
-        etPassword = view.findViewById(R.id.et_password);
-
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage(getString(R.string.login_is_process));
-        progressDialog.setCancelable(false);
-
-        btnLogin.setOnClickListener(this);
-    }
-
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_login) {
@@ -112,6 +105,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private void userLogin(String username, String password) {
         if (loginInvalid(username, password)) {
+            displayLoading();
             login(username, password);
         } else {
             showToast(getString(R.string.error_form_invalid));
@@ -123,60 +117,71 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     private void login(String username, String password) {
-        progressDialog.show();
         Call<LoginItemDao> call = HttpManager.getInstance().getService().repos(username, password);
         call.enqueue(new Callback<LoginItemDao>() {
             @Override
             public void onResponse(Call<LoginItemDao> call, Response<LoginItemDao> response) {
                 if (response.isSuccessful()) {
+                    disableLoading();
                     LoginItemDao dao = response.body();
-                    verifyLogin(dao);
+                    verifyLogin(dao.isStatus(), dao.getType());
+                    setCurrentUser(dao);
                 } else {
                     showToast(response.errorBody().toString());
+                    disableLoading();
                 }
             }
 
             @Override
             public void onFailure(Call<LoginItemDao> call, Throwable t) {
                 Log.d(TAG, "onFailure: " + t.toString());
+                disableLoading();
             }
         });
     }
 
-    private void verifyLogin(LoginItemDao dao) {
-        if (dao.isStatus()) {
+    private void verifyLogin(boolean status, String userType) {
+        if (status) {
             showToast(getString(R.string.login_success));
-            verifyStatus(dao);
-            progressDialog.dismiss();
+            verifyUserType(userType);
         } else {
             showToast(getString(R.string.login_failure));
-            progressDialog.dismiss();
         }
+    }
+
+    private void displayLoading() {
+        progressDialog.show();
+    }
+
+    private void disableLoading() {
+        progressDialog.dismiss();
     }
 
     private void showToast(String text) {
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
-    private void verifyStatus(LoginItemDao dao) {
-        if (dao.getType().toLowerCase().equals(StaticStringHelper.TYPE_ADMIN)) {
-
-        } else if (dao.getType().toLowerCase().equals(StaticStringHelper.TYPE_CASHIER)) {
+    private void verifyUserType(String userType) {
+        if (userType.toLowerCase().equals(StaticStringHelper.TYPE_ADMIN)) {
             // do something
-        } else if (dao.getType().toLowerCase().equals(StaticStringHelper.TYPE_WAITRESS)) {
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean(StaticStringHelper.STATUS, dao.isStatus());
-            editor.putString(StaticStringHelper.EMPLOYEE_NAME, dao.getName());
-            editor.putString(StaticStringHelper.EMPLOYEE_TYPE, dao.getType());
-            editor.putString(StaticStringHelper.RESTAURANT_ID, dao.getIdRestaurant());
-            editor.putString(StaticStringHelper.RESTAURANT_NAME, dao.getRestaurantName());
-            editor.commit();
-
+        } else if (userType.toLowerCase().equals(StaticStringHelper.TYPE_CASHIER)) {
+            // do something
+        } else if (userType.toLowerCase().equals(StaticStringHelper.TYPE_WAITRESS)) {
             onStartActivityHelper(getContext(), ManageTableActivity.class);
-        } else if (dao.getType().toLowerCase().equals(StaticStringHelper.TYPE_CHEF)) {
+        } else if (userType.toLowerCase().equals(StaticStringHelper.TYPE_CHEF)) {
             // do something
         }
+    }
+
+    private void setCurrentUser(LoginItemDao dao) {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(StaticStringHelper.STATUS, dao.isStatus());
+        editor.putString(StaticStringHelper.EMPLOYEE_NAME, dao.getName());
+        editor.putString(StaticStringHelper.EMPLOYEE_TYPE, dao.getType());
+        editor.putString(StaticStringHelper.RESTAURANT_ID, dao.getIdRestaurant());
+        editor.putString(StaticStringHelper.RESTAURANT_NAME, dao.getRestaurantName());
+        editor.commit();
     }
 
     private void onStartActivityHelper(Context context, Class<? extends Activity> activity) {
