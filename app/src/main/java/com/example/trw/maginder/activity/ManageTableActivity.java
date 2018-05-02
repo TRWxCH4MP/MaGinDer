@@ -60,14 +60,18 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
                     .commit();
         }
 
+        getCurrentUser();
+
+        initializeUI();
+        initializeDrawer();
+    }
+
+    private void getCurrentUser() {
         SharedPreferences sharedPreferences = getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
         employeeName = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_NAME, null);
         employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
         restaurantId = sharedPreferences.getString(StaticStringHelper.RESTAURANT_ID, null);
         restaurantName = sharedPreferences.getString(StaticStringHelper.RESTAURANT_NAME, null);
-
-        initializeUI();
-        initializeDrawer();
     }
 
     private void initializeUI() {
