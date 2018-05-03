@@ -84,10 +84,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
 
         bundle = new Bundle();
 
-        SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        employeeName = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_NAME, null);
-        employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
-        restaurantId = sharedPreferences.getString(StaticStringHelper.RESTAURANT_ID, null);
+        getCurrentUser();
 
         Intent intent = getIntent();
         tableId = intent.getStringExtra("tableId");
@@ -116,6 +113,13 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         initializeUI();
         initializeDrawer();
 
+    }
+
+    private void getCurrentUser() {
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        employeeName = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_NAME, null);
+        employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
+        restaurantId = sharedPreferences.getString(StaticStringHelper.RESTAURANT_ID, null);
     }
 
     private void initializeUI() {
