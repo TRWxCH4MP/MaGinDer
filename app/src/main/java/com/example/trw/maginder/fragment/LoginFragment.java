@@ -55,6 +55,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         getCurrentUser();
         initializeUI(view);
+        setupView();
 
         return view;
     }
@@ -64,6 +65,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         etUsername = view.findViewById(R.id.et_username);
         etPassword = view.findViewById(R.id.et_password);
 
+    }
+
+    private void setupView() {
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage(getString(R.string.login_is_process));
         progressDialog.setCancelable(false);
