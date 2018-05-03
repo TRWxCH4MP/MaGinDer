@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -24,7 +23,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.model.StaticStringHelper;
 import com.example.trw.maginder.activity.MenuActivity;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
@@ -33,6 +31,7 @@ import com.example.trw.maginder.callback.TableCallback;
 import com.example.trw.maginder.create_item.CreateTableItem;
 import com.example.trw.maginder.service.dao.TableItemCollectionDao;
 import com.example.trw.maginder.service.http_manger.HttpManagerTable;
+import com.example.trw.maginder.utility.UserModel;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -62,7 +61,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     private String employeeName;
     private String employeeType;
     private String restaurantId;
-    private String popupState;
+    private String tableState;
     private String zoneId;
     private String tableId;
     private List<String> listTabLayoutZone = new ArrayList<>();
@@ -84,6 +83,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     private TabLayout tabLayout;
 
     private Intent intent;
+    private UserModel userModel;
 
     private ProgressDialog progressDialog;
 
@@ -100,17 +100,21 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        restaurantId = sharedPreferences.getString(StaticStringHelper.RESTAURANT_ID, null);
-        employeeName = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_NAME, null);
-        employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
-
-
+        getCurrentUser();
         intent = new Intent(getContext(), MenuActivity.class);
 
         if (restaurantId != null) {
             createTableZone();
         }
+    }
+
+    private void getCurrentUser() {
+        userModel = new UserModel();
+        userModel.getCurrentUser();
+
+        restaurantId = userModel.getCurrentRestaurantId();
+        employeeName = userModel.getCurrentUserName();
+        employeeType = userModel.getCurrentUserType();
     }
 
     @Override
@@ -154,7 +158,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
         dialog.show();
         this.zoneId = zoneId;
         this.tableId = tableId;
-        popupState = tableState;
+        this.tableState = tableState;
 
         if (tableState.equals("true")) {
             int time = (int) (new Date().getTime() / 1000);
@@ -366,9 +370,9 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     }
 
     private void handleButtonOK() {
-        if (popupState.equals(STATE_TRUE)) {
+        if (tableState.equals(STATE_TRUE)) {
             startActivity(intent);
-        } else if (popupState.equals(STATE_FALSE)) {
+        } else if (tableState.equals(STATE_FALSE)) {
             dialog.cancel();
             updateTableState();
         }
