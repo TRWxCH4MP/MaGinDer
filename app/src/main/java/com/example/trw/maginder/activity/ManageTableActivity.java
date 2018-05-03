@@ -49,6 +49,7 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
 
         getCurrentUser();
         initializeUI();
+        setupView();
         initializeDrawer();
     }
 
@@ -61,12 +62,14 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
         toolbarMenu = findViewById(R.id.tb_menu);
         imgvHamburgerMenu = findViewById(R.id.imgv_hamburger_menu);
         tvTitleRestaurantName = findViewById(R.id.tv_title_restaurant_name);
+    }
+
+    private void setupView() {
         tvTitleRestaurantName.setText(userModel.getCurrentRestaurantName());
 
         if (imgvHamburgerMenu != null) {
             imgvHamburgerMenu.setOnClickListener(this);
         }
-
     }
 
     @Override
@@ -77,7 +80,7 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
     }
-    
+
     private void initializeDrawer() {
 
         itemTable = new PrimaryDrawerItem()
