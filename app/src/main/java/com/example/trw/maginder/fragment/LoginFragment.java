@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,10 +16,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.model.StaticStringHelper;
-import com.example.trw.maginder.activity.ManageTableActivity;
 import com.example.trw.maginder.service.http_manger.HttpManager;
 import com.example.trw.maginder.service.dao.LoginItemDao;
+import com.example.trw.maginder.utility.UserModel;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,6 +34,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private Button btnLogin;
     private EditText etUsername;
     private EditText etPassword;
+    private UserModel userModel;
 
     private ProgressDialog progressDialog;
 
@@ -73,23 +72,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     private void getCurrentUser() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
-        boolean loginStatus = sharedPreferences.getBoolean(StaticStringHelper.STATUS, false);
-        String userType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
+        userModel = new UserModel();
+        userModel.getCurrentUser();
 
-        if (loginStatus) {
-            userIsSignedIn(userType);
+        if (userModel.getCurrentUserStatus()) {
+            onStartActivityHelper(getContext(), userModel.verifyUserType(userModel.getCurrentUserType()));
         }
-    }
-
-    private void userIsSignedIn(String userType) {
-        if (userIsInvalid(userType)) {
-            verifyUserType(userType);
-        }
-    }
-
-    private boolean userIsInvalid(String userType) {
-        return userType != null;
     }
 
     @Override
@@ -102,21 +90,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
     private void userLogin(String username, String password) {
-        if (loginInvalid(username, password)) {
+        if (userModel.loginInvalid(username, password)) {
             displayLoading();
-            login(username, password);
+            onLogin(username, password);
         } else {
             showToast(getString(R.string.error_form_invalid));
         }
     }
 
-    private boolean loginInvalid(String username, String password) {
-        return !username.isEmpty() && !password.isEmpty();
-    }
-
-    private void login(String username, String password) {
+    private void onLogin(String username, String password) {
         Call<LoginItemDao> call = HttpManager.getInstance().getService().repos(username, password);
         call.enqueue(new Callback<LoginItemDao>() {
             @Override
@@ -124,8 +107,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 if (response.isSuccessful()) {
                     disableLoading();
                     LoginItemDao dao = response.body();
+                    userModel.setCurrentUser(dao);
                     verifyLogin(dao.isStatus(), dao.getType());
-                    setCurrentUser(dao);
                 } else {
                     showToast(response.errorBody().toString());
                     disableLoading();
@@ -143,7 +126,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private void verifyLogin(boolean status, String userType) {
         if (status) {
             showToast(getString(R.string.login_success));
-            verifyUserType(userType);
+            onStartActivityHelper(getContext(), userModel.verifyUserType(userType));
         } else {
             showToast(getString(R.string.login_failure));
         }
@@ -161,32 +144,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
-    private void verifyUserType(String userType) {
-        if (userType.toLowerCase().equals(StaticStringHelper.TYPE_ADMIN)) {
-            // do something
-        } else if (userType.toLowerCase().equals(StaticStringHelper.TYPE_CASHIER)) {
-            // do something
-        } else if (userType.toLowerCase().equals(StaticStringHelper.TYPE_WAITRESS)) {
-            onStartActivityHelper(getContext(), ManageTableActivity.class);
-        } else if (userType.toLowerCase().equals(StaticStringHelper.TYPE_CHEF)) {
-            // do something
-        }
-    }
-
-    private void setCurrentUser(LoginItemDao dao) {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(StaticStringHelper.PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(StaticStringHelper.STATUS, dao.isStatus());
-        editor.putString(StaticStringHelper.EMPLOYEE_NAME, dao.getName());
-        editor.putString(StaticStringHelper.EMPLOYEE_TYPE, dao.getType());
-        editor.putString(StaticStringHelper.RESTAURANT_ID, dao.getIdRestaurant());
-        editor.putString(StaticStringHelper.RESTAURANT_NAME, dao.getRestaurantName());
-        editor.commit();
-    }
-
     private void onStartActivityHelper(Context context, Class<? extends Activity> activity) {
-        Intent intent = new Intent(context, activity);
-        startActivity(intent);
+        if (activity != null) {
+            Intent intent = new Intent(context, activity);
+            startActivity(intent);
+        }
     }
 
 }
