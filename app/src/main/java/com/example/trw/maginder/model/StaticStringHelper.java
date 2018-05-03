@@ -1,4 +1,4 @@
-package com.example.trw.maginder;
+package com.example.trw.maginder.model;
 
 public class StaticStringHelper {
 

@@ -17,7 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.StaticStringHelper;
+import com.example.trw.maginder.model.StaticStringHelper;
 import com.example.trw.maginder.activity.ManageTableActivity;
 import com.example.trw.maginder.service.http_manger.HttpManager;
 import com.example.trw.maginder.service.dao.LoginItemDao;

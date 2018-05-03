@@ -21,7 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.StaticStringHelper;
+import com.example.trw.maginder.model.StaticStringHelper;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
 import com.example.trw.maginder.adapter.item.PreOrderMenuItem;

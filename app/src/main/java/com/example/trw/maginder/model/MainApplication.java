@@ -1,4 +1,4 @@
-package com.example.trw.maginder;
+package com.example.trw.maginder.model;
 
 import android.app.Application;
 

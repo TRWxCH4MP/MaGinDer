@@ -4,20 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.StaticStringHelper;
-import com.example.trw.maginder.adapter.MainAdapter;
+import com.example.trw.maginder.model.StaticStringHelper;
 import com.example.trw.maginder.callback.ChooseMenuCallback;
 import com.example.trw.maginder.callback.FragmentCallback;
 import com.example.trw.maginder.db.DeleteData;
@@ -28,10 +24,6 @@ import com.example.trw.maginder.db.entity.MenuEntity;
 import com.example.trw.maginder.fragment.AllMenuFragment;
 import com.example.trw.maginder.fragment.PreOrderFragment;
 import com.example.trw.maginder.fragment.PreOrderedMenuFragment;
-import com.example.trw.maginder.service.dao.RestaurantItemCollectionDao;
-import com.example.trw.maginder.service.dao.RestaurantItemDao;
-import com.example.trw.maginder.service.dao.RestaurantMenuTypeItemCollectionDao;
-import com.example.trw.maginder.service.http_manger.HttpManagerMenu;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -46,9 +38,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener, ChooseMenuCallback, FragmentCallback {
     private static final String TAG = "MenuActivity";
