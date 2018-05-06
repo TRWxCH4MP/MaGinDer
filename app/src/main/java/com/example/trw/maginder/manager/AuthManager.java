@@ -13,7 +13,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AuthManager {
-    
+
     private static AuthManager manager;
 
     public static AuthManager getInstance() {
