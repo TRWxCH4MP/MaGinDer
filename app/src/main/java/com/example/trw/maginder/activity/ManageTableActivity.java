@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,7 +13,7 @@ import android.widget.TextView;
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.fragment.ManageOrderFragment;
 import com.example.trw.maginder.fragment.TableFragment;
-import com.example.trw.maginder.utility.UserModel;
+import com.example.trw.maginder.manager.AuthManager;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -28,13 +29,10 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
     private Toolbar toolbarMenu;
     private TextView tvTitleRestaurantName;
 
-    private UserModel userModel;
-
     private Drawer drawer;
     private PrimaryDrawerItem itemTable;
     private PrimaryDrawerItem itemManageOrder;
     private PrimaryDrawerItem itemSignOut;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +45,9 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
                     .commit();
         }
 
-        getCurrentUser();
         initializeUI();
         setupView();
         initializeDrawer();
-    }
-
-    private void getCurrentUser() {
-        userModel = new UserModel();
-        userModel.getCurrentUser();
     }
 
     private void initializeUI() {
@@ -65,7 +57,7 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void setupView() {
-        tvTitleRestaurantName.setText(userModel.getCurrentRestaurantName());
+        tvTitleRestaurantName.setText(getRestaurantName());
 
         if (imgvHamburgerMenu != null) {
             imgvHamburgerMenu.setOnClickListener(this);
@@ -82,7 +74,6 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initializeDrawer() {
-
         itemTable = new PrimaryDrawerItem()
                 .withIdentifier(0)
                 .withName(R.string.table)
@@ -107,11 +98,10 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
                 .withHeaderBackground(R.color.maginder_deep_grey)
                 .addProfiles(
                         new ProfileDrawerItem()
-                                .withName(userModel.getCurrentUserType() + " " + userModel.getCurrentUserName())
+                                .withName(getUserType() + " " + getUserName())
                                 .withIcon(R.drawable.maginder_logo)
                 )
                 .build();
-
 
         drawer = new DrawerBuilder()
                 .withSelectedItem(-1)
@@ -134,16 +124,32 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
                             fragment = new ManageOrderFragment();
                             replaceFragment(fragment);
                         } else if (drawerItem == itemSignOut) {
-                            UserModel userModel = new UserModel();
-                            userModel.clearCurrentUser();
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
+                            onLogOut();
                         }
                         return false;
                     }
                 })
                 .build();
+    }
+
+    private String getRestaurantName() {
+        return AuthManager.getInstance().getCurrentRestaurantName();
+    }
+
+    private String getUserType() {
+        return AuthManager.getInstance().getCurrentUserType();
+    }
+
+    private String getUserName() {
+        return AuthManager.getInstance().getCurrentUserName();
+    }
+
+    private void onLogOut() {
+        AuthManager.getInstance().clearCurrentUser();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 
     private void replaceFragment(android.support.v4.app.Fragment fragment) {
