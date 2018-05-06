@@ -20,5 +20,6 @@
     <string name="total">รวม</string>
     <string name="table">โต๊ะ</string>
     <string name="login_is_process">กำลังทำการล็อคอิน</string>
+    <string name="loading_table">กำลังโหลดข้อมูลโต๊ะอาหาร</string>
 
 </resources>
