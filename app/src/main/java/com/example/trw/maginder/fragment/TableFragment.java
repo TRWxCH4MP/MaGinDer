@@ -1,6 +1,5 @@
 package com.example.trw.maginder.fragment;
 
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -27,18 +26,12 @@ import com.example.trw.maginder.R;
 import com.example.trw.maginder.activity.MenuActivity;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
-import com.example.trw.maginder.adapter.item.TableItem;
 import com.example.trw.maginder.callback.TableCallback;
 import com.example.trw.maginder.create_item.CreateTableItem;
 import com.example.trw.maginder.manager.AuthManager;
 import com.example.trw.maginder.manager.TableManager;
+import com.example.trw.maginder.model.StaticStringHelper;
 import com.example.trw.maginder.service.dao.TableItemCollectionDao;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,20 +42,10 @@ import java.util.List;
  */
 public class TableFragment extends Fragment implements TabLayout.OnTabSelectedListener, View.OnClickListener {
     private static final String TAG = "ManageTableActivity";
-    private static final String REF_FIREBASE_CHILD_TABLE = "Table";
-    private static final String STATE_TRUE = "true";
-    private static final String STATE_FALSE = "false";
-    private static final String REF_FIREBASE_CHILD_STATUS = "Status";
 
-    private String employeeName;
-    private String employeeType;
     private String restaurantId;
-    private String tableState;
-    private String zoneId;
-    private String tableId;
     private List<String> listTabLayoutZone = new ArrayList<>();
     private List<String> listZoneId = new ArrayList<>();
-    private List<CreateTableItem> listTable = new ArrayList<>();
 
     private Dialog dialog;
     private TextView textViewOpenTable;
@@ -77,8 +60,6 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     private MainAdapter adapter;
     private TableItemCollectionDao listTableCollection;
     private TabLayout tabLayout;
-
-    private Intent intent;
 
     private ProgressDialog progressDialog;
 
@@ -95,18 +76,15 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getCurrentUser();
-        intent = new Intent(getContext(), MenuActivity.class);
+        getRestaurantId();
 
         if (restaurantId != null) {
             createTableZone(restaurantId);
         }
     }
 
-    private void getCurrentUser() {
+    private void getRestaurantId() {
         restaurantId = AuthManager.getInstance().getCurrentRestaurantId();
-        employeeName = AuthManager.getInstance().getCurrentUserName();
-        employeeType = AuthManager.getInstance().getCurrentUserType();
     }
 
     @Override
@@ -125,45 +103,55 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     private void initializeUI(View view) {
         recyclerViewTable = view.findViewById(R.id.recycler_view_table);
         tabLayout = view.findViewById(R.id.tab_title);
-
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage(getString(R.string.loading_table));
-        progressDialog.show();
-
     }
 
     private void setupView() {
         TableCallback tableCallback = new TableCallback() {
             @Override
             public void onCallbackTableState(String zoneId, String tableId, String tableName, String tableState) {
-                showPopup(zoneId, tableId, tableName, tableState);
+                setTableData(zoneId, tableId, tableName, tableState);
+                showPopup();
             }
         };
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage(getString(R.string.loading_table));
+        progressDialog.show();
 
         recyclerViewTable.setLayoutManager(new GridLayoutManager(getContext(), 2));
         adapter = new MainAdapter(tableCallback);
         recyclerViewTable.setAdapter(adapter);
+    }
+
+    private void showPopup() {
+        showDialog();
+
+        if (getTableState()) {
+            tableIsOpen();
+        } else {
+            tableIsClosed();
+        }
+    }
+
+    private void setTableData(String zoneId, String tableId, String tableName, String tableState) {
+        setZoneId(zoneId);
+        TableManager.getInstance().setTableId(tableId);
+        TableManager.getInstance().setTableState(tableState);
+        TableManager.getInstance().setTableName(tableName);
+    }
+
+    private boolean getTableState() {
+        String tableState = TableManager.getInstance().getTableState();
+
+        if (tableState.equals(StaticStringHelper.TRUE)) {
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
-    private void showPopup(String zoneId, String tableId, String tableName, String tableState) {
-        dialog.show();
-        this.zoneId = zoneId;
-        this.tableId = tableId;
-        this.tableState = tableState;
-
-        if (tableState.equals(STATE_TRUE)) {
-            int time = (int) (new Date().getTime() / 1000);
-            String timeStampTransaction = "TR-" + time;
-
-            intent.putExtra("tableId", tableId);
-            intent.putExtra("timeStamp", timeStampTransaction);
-            intent.putExtra("tableName", tableName);
-
-            tableIsOpen();
-        } else if (tableState.equals(STATE_FALSE)) {
-            tableIsClosed();
-        }
+    private void setZoneId(String zoneId) {
+        TableManager.getInstance().setZoneId(zoneId);
     }
 
     private void tableIsOpen() {
@@ -197,7 +185,6 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
 
         buttonOk.setOnClickListener(this);
         buttonCancel.setOnClickListener(this);
-
     }
 
     private void createTableZone(String restaurantId) {
@@ -214,115 +201,60 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
         });
     }
 
-    private void showMessageFailure(String exception) {
-        showToast(exception);
-    }
-
-    private void showToast(String text) {
-        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
-    }
-
     private void setupTable(TableItemCollectionDao dao) {
         listTableCollection = dao;
         if (!listTableCollection.getData().isEmpty()) {
-            for (int index = 0; index < listTableCollection.getData().size(); index++) {
-                listTabLayoutZone.add(listTableCollection.getData().get(index).getZoneName());
-                listZoneId.add(listTableCollection.getData().get(index).getZoneId());
-            }
-
-            if (!listTabLayoutZone.isEmpty()) {
-                createTabLayout(listTabLayoutZone);
-                zoneId = listTableCollection.getData().get(0).getZoneId();
-                createTable();
-            }
+            setupTabLayout();
         }
     }
 
-    private void createTable() {
-        Log.d(TAG, "getDataRestaurantTable: " + zoneId);
-        listTable.clear();
+    private void setupTabLayout() {
+        for (int index = 0; index < listTableCollection.getData().size(); index++) {
+            listTabLayoutZone.add(listTableCollection.getData().get(index).getZoneName());
+            listZoneId.add(listTableCollection.getData().get(index).getZoneId());
+        }
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference()
-                .child("Table")
-                .child(restaurantId)
-                .child(zoneId);
+        if (!listTabLayoutZone.isEmpty()) {
+            createTabLayout(listTabLayoutZone);
+            setZoneId(listTableCollection.getData().get(0).getZoneId());
+            onSetupTable();
+        }
+    }
 
-        databaseReference.addChildEventListener(new ChildEventListener() {
+    private void onSetupTable() {
+        TableManager.getInstance().onSetupTable(new TableManager.SetupTableCallback() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d(TAG, "onChildAdded: " + zoneId);
-                CreateTableItem data = dataSnapshot.getValue(CreateTableItem.class);
-                listTable.add(data);
-                createItem(listTable);
-
+            public void onTableAdded(List<CreateTableItem> listTable) {
+                createTable(listTable);
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.d(TAG, "onChildChanged: " + zoneId);
-                CreateTableItem data = dataSnapshot.getValue(CreateTableItem.class);
+            public void onTableChanged(List<CreateTableItem> listTable) {
+                createTable(listTable);
+            }
 
-                if (zoneId.equals(data.getId_zone())) {
-                    Log.d(TAG, "onChildChanged: zone id it's match");
-                    int index = updateItemOnDataChange(data);
-                    Log.d(TAG, "updateItemOnDataChange2 index: " + index);
-                    listTable.set(index, data);
-                    createItem(listTable);
+            @Override
+            public void onSuccess(boolean isSuccess) {
+                if (isSuccess) {
+                    hideLoading();
                 } else {
-                    Log.d(TAG, "onChildChanged: zone id not match !");
+                    hideLoading();
                 }
-
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onZoneIdIsNotMatch(String error) {
+                hideLoading();
+//                Log.d(TAG, "onZoneIdIsNotMatch: " + error);
             }
         });
-
-        progressDialog.dismiss();
     }
 
-    private void createItem(List<CreateTableItem> listTable) {
-        List<BaseItem> itemList = new ArrayList<>();
+    private void createTable(List<CreateTableItem> listTable) {
+        List<BaseItem> itemList = TableManager.getInstance().onCreateTable(listTable);
 
-        for (int index = 0; index < listTable.size(); index++) {
-            if (listTable.get(index).getName_table() != null && listTable.get(index).getStatus() != null) {
-                itemList.add(new TableItem()
-                        .setTableName(listTable.get(index).getName_table())
-                        .setTableState(listTable.get(index).getStatus())
-                        .setTableId(listTable.get(index).getId_table())
-                        .setZoneId(listTable.get(index).getId_zone())
-                );
-            }
-
-        }
         adapter.setItemList(itemList);
         adapter.notifyDataSetChanged();
-    }
-
-    private int updateItemOnDataChange(CreateTableItem data) {
-        int index = -1;
-        Log.d(TAG, "updateItemOnDataChange2 table name: " + data.getName_table());
-        for (int i = 0; i < listTable.size(); i++) {
-            if (listTable.get(i).getId_table().equals(data.getId_table())) {
-                index = i;
-                Log.d(TAG, "updateItemOnDataChange2: " + i);
-                break;
-            }
-        }
-        return index;
     }
 
     private void createTabLayout(List<String> listTabLayout) {
@@ -338,8 +270,8 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     public void onTabSelected(TabLayout.Tab tab) {
         if (tab.getPosition() == tabLayout.getSelectedTabPosition()) {
 //            Toast.makeText(this, listTableCollection.getData().get(tabLayout.getSelectedTabPosition()).getZoneId(), Toast.LENGTH_SHORT).show();
-            zoneId = listTableCollection.getData().get(tabLayout.getSelectedTabPosition()).getZoneId();
-            createTable();
+            setZoneId(listTableCollection.getData().get(tabLayout.getSelectedTabPosition()).getZoneId());
+            onSetupTable();
         }
     }
 
@@ -352,8 +284,8 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     public void onTabReselected(TabLayout.Tab tab) {
         if (tab.getPosition() == tabLayout.getSelectedTabPosition()) {
 //            Toast.makeText(this, listTableCollection.getData().get(tabLayout.getSelectedTabPosition()).getZoneId(), Toast.LENGTH_SHORT).show();
-            zoneId = listTableCollection.getData().get(tabLayout.getSelectedTabPosition()).getZoneId();
-            createTable();
+            setZoneId(listTableCollection.getData().get(tabLayout.getSelectedTabPosition()).getZoneId());
+            onSetupTable();
         }
     }
 
@@ -362,47 +294,61 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
         switch (view.getId()) {
             case R.id.btn_ok:
                 handleButtonOK();
-                dialog.cancel();
+                hideDialog();
                 break;
             case R.id.btn_cancel:
-                dialog.cancel();
+                hideDialog();
                 break;
         }
     }
 
     private void handleButtonOK() {
-        if (tableState.equals(STATE_TRUE)) {
-            startActivity(intent);
-        } else if (tableState.equals(STATE_FALSE)) {
-            dialog.cancel();
+        if (getTableState()) {
+            goToMenuActivity();
+        } else {
             updateTableState();
+            hideDialog();
         }
     }
 
+    private void goToMenuActivity() {
+        int time = (int) (new Date().getTime() / 1000);
+        String timeStampTransaction = "TR-" + time;
+        TableManager.getInstance().setTransaction(timeStampTransaction);
+
+        Intent intent = new Intent(getContext(), MenuActivity.class);
+        startActivity(intent);
+    }
+
     private void updateTableState() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference databaseReference =
-                database.getReference()
-                        .child(REF_FIREBASE_CHILD_TABLE)
-                        .child(restaurantId)
-                        .child(zoneId);
+        TableManager.getInstance().updateTableState(new TableManager.UpdateTableStateCallback() {
+            @Override
+            public void onUpdateSuccess(boolean isSuccess) {
+                if (isSuccess) {
+                    showToast(TableManager.getInstance().getTableName() + " " + getString(R.string.ready_service));
+                }
+            }
+        });
+    }
 
-        databaseReference.orderByChild("Id_table").equalTo(tableId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+    private void showDialog() {
+        dialog.show();
+    }
 
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        String key = dataSnapshot.getChildren().iterator().next().getKey();
-//                                    Log.d(TAG, "onDataChange: " + key);
-                        databaseReference.child(key).child(REF_FIREBASE_CHILD_STATUS).setValue(STATE_TRUE);
+    private void showMessageFailure(String exception) {
+        showToast(exception);
+    }
 
-                    }
+    private void showToast(String text) {
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+    private void hideLoading() {
+        progressDialog.dismiss();
+    }
 
-                    }
-                });
+    private void hideDialog() {
+        dialog.cancel();
     }
 
 }
