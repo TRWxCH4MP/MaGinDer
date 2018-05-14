@@ -38,6 +38,10 @@ public class TableManager {
         return manager;
     }
 
+    private TableManager() {
+
+    }
+
     public String getZoneId() {
         return zoneId;
     }
