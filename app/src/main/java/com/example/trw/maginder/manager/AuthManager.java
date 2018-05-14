@@ -23,6 +23,10 @@ public class AuthManager {
         return manager;
     }
 
+    private AuthManager() {
+        
+    }
+
     public void onLogIn(String username, String password, final AuthManagerCallback callback) {
         Call<LoginItemDao> call = HttpManager.getInstance().getService().repos(username, password);
         call.enqueue(new Callback<LoginItemDao>() {
