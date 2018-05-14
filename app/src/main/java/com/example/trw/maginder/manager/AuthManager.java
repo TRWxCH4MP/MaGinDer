@@ -24,7 +24,7 @@ public class AuthManager {
     }
 
     private AuthManager() {
-        
+
     }
 
     public void onLogIn(String username, String password, final AuthManagerCallback callback) {
