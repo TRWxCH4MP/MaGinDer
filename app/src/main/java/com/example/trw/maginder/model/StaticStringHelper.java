@@ -17,4 +17,5 @@ public class StaticStringHelper {
     public static final String REF_FIREBASE_CHILD_TABLE_ID = "Id_table";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
+    public static final String IMAGE_URL = "http://it2.sut.ac.th/prj60_g14/Project/menu_img/";
 }
