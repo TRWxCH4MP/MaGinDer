@@ -12,4 +12,9 @@ public class StaticStringHelper {
     public static final String EMPLOYEE_TYPE = "employeeType";
     public static final String RESTAURANT_NAME = "restaurantName";
     public static final String RESTAURANT_ID = "restaurantId";
+    public static final String REF_FIREBASE_TABLE = "Table";
+    public static final String REF_FIREBASE_CHILD_TABLE_STATUS = "Status";
+    public static final String REF_FIREBASE_CHILD_TABLE_ID = "Id_table";
+    public static final String TRUE = "true";
+    public static final String FALSE = "false";
 }
