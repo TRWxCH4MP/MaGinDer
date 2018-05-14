@@ -1,6 +1,7 @@
 package com.example.trw.maginder.activity;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -73,6 +74,32 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    private String getRestaurantName() {
+        return AuthManager.getInstance().getCurrentRestaurantName();
+    }
+
+    private String getUserType() {
+        return AuthManager.getInstance().getCurrentUserType();
+    }
+
+    private String getUserName() {
+        return AuthManager.getInstance().getCurrentUserName();
+    }
+
+    private void onLogOut() {
+        AuthManager.getInstance().clearCurrentUser();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
+
+    private void replaceFragment(android.support.v4.app.Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.contentContainer, fragment);
+        transaction.commit();
+    }
+
     private void initializeDrawer() {
         itemTable = new PrimaryDrawerItem()
                 .withIdentifier(0)
@@ -102,7 +129,6 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
                                 .withIcon(R.drawable.maginder_logo)
                 )
                 .build();
-
         drawer = new DrawerBuilder()
                 .withSelectedItem(-1)
                 .withAccountHeader(headerResult)
@@ -113,49 +139,24 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
                         itemManageOrder.withTextColorRes(R.color.maginder_soft_white),
                         itemSignOut.withTextColorRes(R.color.maginder_soft_white)
                 )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        android.support.v4.app.Fragment fragment;
-                        if (drawerItem == itemTable) {
-                            fragment = new TableFragment();
-                            replaceFragment(fragment);
-                        } else if (drawerItem == itemManageOrder) {
-                            fragment = new ManageOrderFragment();
-                            replaceFragment(fragment);
-                        } else if (drawerItem == itemSignOut) {
-                            onLogOut();
-                        }
-                        return false;
-                    }
-                })
+                .withOnDrawerItemClickListener(onDrawerItemClickListener)
                 .build();
     }
 
-    private String getRestaurantName() {
-        return AuthManager.getInstance().getCurrentRestaurantName();
-    }
-
-    private String getUserType() {
-        return AuthManager.getInstance().getCurrentUserType();
-    }
-
-    private String getUserName() {
-        return AuthManager.getInstance().getCurrentUserName();
-    }
-
-    private void onLogOut() {
-        AuthManager.getInstance().clearCurrentUser();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
-    }
-
-    private void replaceFragment(android.support.v4.app.Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.contentContainer, fragment);
-        transaction.commit();
-    }
-
+    Drawer.OnDrawerItemClickListener onDrawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
+        @Override
+        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+            Fragment fragment;
+            if (drawerItem == itemTable) {
+                fragment = new TableFragment();
+                replaceFragment(fragment);
+            } else if (drawerItem == itemManageOrder) {
+                fragment = new ManageOrderFragment();
+                replaceFragment(fragment);
+            } else if (drawerItem == itemSignOut) {
+                onLogOut();
+            }
+            return false;
+        }
+    };
 }
