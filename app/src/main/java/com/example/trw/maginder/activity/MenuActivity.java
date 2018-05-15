@@ -49,16 +49,22 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+        Log.d(TAG, "onCreate: ");
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.contentContainer, new AllMenuFragment())
                     .commit();
         }
-
         initializeUI();
         setupView();
         initializeDrawer();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        onBackToTableActivity();
     }
 
     private void initializeUI() {
