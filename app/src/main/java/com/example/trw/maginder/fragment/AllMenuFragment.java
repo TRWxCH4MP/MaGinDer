@@ -3,7 +3,6 @@ package com.example.trw.maginder.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -17,55 +16,32 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.model.StaticStringHelper;
+import com.example.trw.maginder.callback.MenuListenerCallback;
+import com.example.trw.maginder.manager.AuthManager;
+import com.example.trw.maginder.manager.MenuManager;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
-import com.example.trw.maginder.adapter.item.MenuItem;
-import com.example.trw.maginder.callback.ChooseMenuCallback;
 import com.example.trw.maginder.callback.FragmentCallback;
 import com.example.trw.maginder.callback.MenuCallback;
-import com.example.trw.maginder.db.InsertData;
-import com.example.trw.maginder.db.QueryData;
-import com.example.trw.maginder.db.callback.OnStateCallback;
-import com.example.trw.maginder.db.callback.SendListDataCallback;
-import com.example.trw.maginder.db.entity.MenuEntity;
 import com.example.trw.maginder.service.dao.RestaurantItemCollectionDao;
 import com.example.trw.maginder.service.dao.RestaurantItemDao;
 import com.example.trw.maginder.service.dao.RestaurantMenuTypeItemCollectionDao;
-import com.example.trw.maginder.service.http_manger.HttpManagerMenu;
-import com.example.trw.maginder.service.http_manger.HttpManagerRestaurant;
-import com.example.trw.maginder.service.http_manger.HttpManagerRestaurantMenuType;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelectedListener, View.OnClickListener {
     private static final String TAG = "AllMenuFragment";
-    private static final String PREF_NAME = "PREF_NAME";
-    private static final String IMAGE_URL = "http://it2.sut.ac.th/prj60_g14/Project/menu_img/";
 
     private String restaurantId;
-    private String employeeName;
-    private String employeeType;
-    private String tableId;
-    private String transaction;
-    private String tableName;
-    private String timeStampOrderMenu;
 
     private List<String> listTabLayoutMenu = new ArrayList<>();
     private List<RestaurantItemDao> listRestaurant;
-    private List<String> listMenuId = new ArrayList<>();
 
     private RelativeLayout iconCart;
     private TextView textViewOrderTotal;
@@ -74,10 +50,8 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     private ProgressDialog progressDialog;
     private Button btnVerifyOrderMenu;
 
-    private RestaurantMenuTypeItemCollectionDao menuTypeDao;
-    private RestaurantItemCollectionDao menuDao;
     private MainAdapter adapter;
-    private ChooseMenuCallback chooseMenuCallback;
+    private MenuListenerCallback menuListenerCallback;
     private FragmentCallback onFragmentCallback;
 
     public AllMenuFragment() {
@@ -89,11 +63,11 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            chooseMenuCallback = (ChooseMenuCallback) context;
+            menuListenerCallback = (MenuListenerCallback) context;
             onFragmentCallback = (FragmentCallback) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement ChooseMenuCallback or FragmentCallback");
+                    + " must implement MenuListenerCallback or FragmentCallback");
         }
     }
 
@@ -101,25 +75,15 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        employeeName = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_NAME, null);
-        employeeType = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_TYPE, null);
-        restaurantId = sharedPreferences.getString(StaticStringHelper.RESTAURANT_ID, null);
-
-        if (getArguments() != null) {
-            tableId = getArguments().getString("TableId");
-            transaction = getArguments().getString("Transaction");
-            tableName = getArguments().getString("TableName");
-            Log.d(TAG, "onCreate: " + tableId);
-            Log.d(TAG, "onCreate: " + tableName);
-            Log.d(TAG, "onCreate: " + transaction);
-        }
-
+        getRestaurantId();
         if (!restaurantId.isEmpty()) {
             getDataRestaurantMenuType();
         }
 
+    }
+
+    private void getRestaurantId() {
+        restaurantId = AuthManager.getInstance().getCurrentRestaurantId();
     }
 
     @Override
@@ -131,160 +95,121 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
 
         initializeUI(view);
         setupView();
-        getPreOrderMenuAmount();
+        getMenuAmount();
 
         return view;
     }
 
-    private void getPreOrderMenuAmount() {
-        QueryData.onLoadMenu(getContext(), new SendListDataCallback() {
+    private void getMenuAmount() {
+        MenuManager.getInstance().onGetMenuAmount(new MenuManager.MenuAmountCallback() {
             @Override
-            public void loadMenuCallback(List<MenuEntity> menuEntities, boolean isSuccess) {
+            public void onMenuAmount(String amount) {
+                textViewOrderTotal.setText(amount);
+            }
+        });
+    }
+
+    private void getMenuAllDetail(String menuId) {
+        MenuManager.getInstance().onGetMenuAllDetail(menuId, new MenuManager.MenuDetailCallback() {
+            @Override
+            public void onComplete(List<RestaurantItemDao> data) {
+                setupMenuToPreOrder(data);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.d(TAG, "onFailure: " + error);
+            }
+        });
+
+    }
+
+    private void setupMenuToPreOrder(List<RestaurantItemDao> data) {
+        MenuManager.getInstance().onSetMenuToSQLite(data, new MenuManager.SetupMenuToSQLiteCallback() {
+            @Override
+            public void onComplete(boolean isSuccess) {
                 if (isSuccess) {
-                    textViewOrderTotal.setText(String.valueOf(menuEntities.size()));
-                }
-            }
-        });
-    }
-
-    private void getMenuAllDetail(final String menuId) {
-        Log.d(TAG, "getMenuAllDetail: ");
-        retrofit2.Call<RestaurantItemCollectionDao> call = HttpManagerMenu.getInstance().getService().repos(menuId);
-        call.enqueue(new Callback<RestaurantItemCollectionDao>() {
-            @Override
-            public void onResponse(retrofit2.Call<RestaurantItemCollectionDao> call, Response<RestaurantItemCollectionDao> response) {
-                if (response.isSuccessful()) {
-                    RestaurantItemCollectionDao dao = response.body();
-                    Log.d(TAG, "onResponse: success");
-                    setPreOrderMenuToSQLite(dao.getData());
-                    progressDialog.show();
+                    menuListenerCallback.menuListenerCallback(true);
+                    getMenuAmount();
+                    hideLoading();
                 } else {
-                    Log.d(TAG, "onResponse: failure");
+                    hideLoading();
                 }
             }
 
             @Override
-            public void onFailure(retrofit2.Call<RestaurantItemCollectionDao> call, Throwable t) {
-                Log.d(TAG, "onFailure: " + t.toString());
+            public void onFailure(String error) {
+                hideLoading();
+                Log.d(TAG, "onFailure: " + error);
             }
         });
     }
 
-    private void setPreOrderMenuToSQLite(List<RestaurantItemDao> data) {
-
-        MenuEntity menuEntity = new MenuEntity();
-        for (int index = 0; index < data.size(); index++) {
-            menuEntity.setDate(data.get(index).getDate());
-            menuEntity.setIdMenu(data.get(index).getIdMenu());
-            menuEntity.setIdKitchen(data.get(index).getIdKitchen());
-            menuEntity.setImg(data.get(index).getImg());
-            menuEntity.setName(data.get(index).getName());
-            menuEntity.setPrice(data.get(index).getPrice());
-        }
-        InsertData.onInsertMenu(getContext(), menuEntity, new OnStateCallback() {
-            @Override
-            public void stateCallback(boolean isSuccess) {
-                if (isSuccess) {
-//                    Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
-                    QueryData.onLoadMenu(getContext(), new SendListDataCallback() {
-                        @Override
-                        public void loadMenuCallback(List<MenuEntity> menuEntities, boolean isSuccess) {
-                            if (isSuccess) {
-                                textViewOrderTotal.setText(String.valueOf(menuEntities.size()));
-                            } else {
-
-                            }
-                        }
-                    });
-                } else {
-                    Toast.makeText(getContext(), "Fail", Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
-                }
-            }
-        });
-    }
-
-    private void getDataRestaurantMenuType() {
-        Call<RestaurantMenuTypeItemCollectionDao> call = HttpManagerRestaurantMenuType.getInstance().getService().repos(restaurantId);
-        call.enqueue(new Callback<RestaurantMenuTypeItemCollectionDao>() {
-            @Override
-            public void onResponse(Call<RestaurantMenuTypeItemCollectionDao> call, Response<RestaurantMenuTypeItemCollectionDao> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "Connect service is successful");
-
-                    menuTypeDao = response.body();
-                    for (int index = 0; index < menuTypeDao.getData().size(); index++) {
-                        Log.d("onResponse", menuTypeDao.getData().get(index).getName());
-                        listTabLayoutMenu.add(menuTypeDao.getData().get(index).getName());
-                    }
-                    if (!listTabLayoutMenu.isEmpty()) {
-                        createTabLayout(listTabLayoutMenu);
-                        getDataRestaurantMenu();
-                    }
-                } else {
-                    Log.d(TAG, "Connect service is failure");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RestaurantMenuTypeItemCollectionDao> call, Throwable t) {
-                Log.d(TAG, t.toString());
-            }
-        });
-    }
-
-    private void getDataRestaurantMenu() {
-        Call<RestaurantItemCollectionDao> call = HttpManagerRestaurant.getInstance().getService().repos(restaurantId);
-        call.enqueue(new Callback<RestaurantItemCollectionDao>() {
-            @Override
-            public void onResponse(Call<RestaurantItemCollectionDao> call, Response<RestaurantItemCollectionDao> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "Connect service is successful");
-                    menuDao = response.body();
-                    listRestaurant = menuDao.getData();
-
-                    if (!listRestaurant.isEmpty()) {
-                        createItem(listRestaurant, listTabLayoutMenu.get(0));
-                    } else {
-                        createItem(null, null);
-                    }
-                } else {
-                    Log.d(TAG, "Connect service is failure");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RestaurantItemCollectionDao> call, Throwable t) {
-                Log.d(TAG, t.toString());
-            }
-        });
-    }
-
-    public void createItem(List<RestaurantItemDao> listRestaurant, String menuType) {
-        List<BaseItem> itemList = new ArrayList<>();
-
-        if (!listRestaurant.isEmpty() && !menuType.isEmpty()) {
-            for (int index = 0; index < listRestaurant.size(); index++) {
-                if (listRestaurant.get(index).getNameType().equals(menuType)) {
-                    Log.d(TAG, "createItemTotal: Item + " + String.valueOf(listRestaurant.get(index).getNameType()));
-                    itemList.add(new MenuItem()
-                            .setOrderDate(listRestaurant.get(index).getDate())
-                            .setOrderMenuId(listRestaurant.get(index).getIdMenu())
-                            .setOrderKitchenId(listRestaurant.get(index).getIdKitchen())
-                            .setOrderImg(IMAGE_URL + listRestaurant.get(index).getImg())
-                            .setOrderName(listRestaurant.get(index).getName())
-                            .setOrderPrice(listRestaurant.get(index).getPrice() + " บาท")
-                    );
-                }
-            }
-            adapter.setItemList(itemList);
-            adapter.notifyDataSetChanged();
-        }
-
+    private void hideLoading() {
         progressDialog.dismiss();
     }
 
+    private void getDataRestaurantMenuType() {
+        MenuManager.getInstance().onGetMenuType(restaurantId, new MenuManager.GetMenuTypeCallback() {
+            @Override
+            public void onComplete(RestaurantMenuTypeItemCollectionDao daoMenuType) {
+                RestaurantMenuTypeItemCollectionDao menuTypeDao = daoMenuType;
+                setupLayoutMenuType(menuTypeDao);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.d(TAG, "onFailure: " + error);
+            }
+        });
+    }
+
+    private void setupLayoutMenuType(RestaurantMenuTypeItemCollectionDao menuTypeDao) {
+        for (int index = 0; index < menuTypeDao.getData().size(); index++) {
+            Log.d("onResponse", menuTypeDao.getData().get(index).getName());
+            listTabLayoutMenu.add(menuTypeDao.getData().get(index).getName());
+        }
+        if (!listTabLayoutMenu.isEmpty()) {
+            createTabLayout(listTabLayoutMenu);
+            getDataRestaurantMenu();
+        }
+    }
+
+    private void getDataRestaurantMenu() {
+        MenuManager.getInstance().onGetMenu(restaurantId, new MenuManager.GetMenuCallback() {
+            @Override
+            public void onComplete(List<RestaurantItemDao> data) {
+                setupMenu(data);
+
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.d(TAG, "onFailure: " + error);
+            }
+        });
+    }
+
+    private void setupMenu(List<RestaurantItemDao> data) {
+        listRestaurant = data;
+        if (!listRestaurant.isEmpty()) {
+            createMenu(listRestaurant, listTabLayoutMenu.get(0));
+        } else {
+            createMenu(null, null);
+        }
+    }
+
+    private void createMenu(List<RestaurantItemDao> listRestaurant, String menuType) {
+        List<BaseItem> itemList = MenuManager.getInstance().onCreateMenu(listRestaurant, menuType);
+
+        if (itemList != null && !itemList.isEmpty()) {
+            hideLoading();
+            adapter.setItemList(itemList);
+            adapter.notifyDataSetChanged();
+        } else {
+            hideLoading();
+        }
+    }
 
     private void createTabLayout(List<String> listTabLayout) {
         for (int index = 0; index < listTabLayout.size(); index++) {
@@ -298,7 +223,7 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         if (tab.getPosition() == tabLayout.getSelectedTabPosition()) {
-            createItem(listRestaurant, listTabLayoutMenu.get(tabLayout.getSelectedTabPosition()));
+            createMenu(listRestaurant, listTabLayoutMenu.get(tabLayout.getSelectedTabPosition()));
         }
     }
 
@@ -310,7 +235,7 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
         if (tab.getPosition() == tabLayout.getSelectedTabPosition()) {
-            createItem(listRestaurant, listTabLayoutMenu.get(tabLayout.getSelectedTabPosition()));
+            createMenu(listRestaurant, listTabLayoutMenu.get(tabLayout.getSelectedTabPosition()));
         }
     }
 
@@ -337,6 +262,9 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
             public void onCallbackMenu(String menuId) {
 //                Toast.makeText(getContext(), menuId, Toast.LENGTH_SHORT).show();
                 setupOrderMenu(menuId);
+                showLoading();
+//                MenuManager.getInstance().menuCountIsPlus(1);
+//                Log.d(TAG, "onCallbackMenu: " + MenuManager.getInstance().getMenuCount());
             }
         };
 
@@ -344,19 +272,15 @@ public class AllMenuFragment extends Fragment implements TabLayout.OnTabSelected
         adapter = new MainAdapter(callbackMenu);
         recyclerView.setAdapter(adapter);
 
+        showLoading();
+    }
+
+    private void showLoading() {
         progressDialog.show();
     }
 
     private void setupOrderMenu(String menuId) {
-        int time = (int) (new Date().getTime() / 1000);
-        timeStampOrderMenu = "MT-" + time;
-
-        listMenuId.add(timeStampOrderMenu);
-        Log.d(TAG, "onReceive: ");
-
-        chooseMenuCallback.ChooseMenuCallback(menuId, timeStampOrderMenu);
-//        ChooseMenuCallback.onMenuAmount(listMenuId.size());
-
+//        Log.d(TAG, "onReceive: ");
         getMenuAllDetail(menuId);
     }
 
