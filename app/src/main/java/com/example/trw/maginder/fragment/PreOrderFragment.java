@@ -4,7 +4,6 @@ package com.example.trw.maginder.fragment;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -21,11 +20,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.model.StaticStringHelper;
+import com.example.trw.maginder.callback.MenuListenerCallback;
+import com.example.trw.maginder.manager.AuthManager;
+import com.example.trw.maginder.manager.MenuManager;
+import com.example.trw.maginder.manager.TableManager;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
-import com.example.trw.maginder.adapter.item.PreOrderMenuItem;
-import com.example.trw.maginder.callback.ChooseMenuCallback;
 import com.example.trw.maginder.callback.FragmentCallback;
 import com.example.trw.maginder.callback.PrimaryKeyMenuCallback;
 import com.example.trw.maginder.db.DeleteData;
@@ -33,11 +33,8 @@ import com.example.trw.maginder.db.QueryData;
 import com.example.trw.maginder.db.callback.OnStateCallback;
 import com.example.trw.maginder.db.callback.SendListDataCallback;
 import com.example.trw.maginder.db.entity.MenuEntity;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,11 +43,6 @@ import java.util.List;
 public class PreOrderFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "PreOrderFragment";
-    private static final String PREF_NAME = "PREF_NAME";
-    private static final String ID_RESTAURANT = "id_restaurant";
-    private static final String IMAGE_URL = "http://it2.sut.ac.th/prj60_g14/Project/menu_img/";
-    private static final String TRANSACTION = "Transaction";
-    private static final String STATUS_IN_PROCEED = "กำลังดำเนินการ";
 
     private String employeeName;
     private String restaurantId;
@@ -58,7 +50,6 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     private String transaction;
     private String tableName;
 
-    private ArrayList<String> transactionMenu;
     private List<MenuEntity> listPreOrderMenu = new ArrayList<>();
 
     private RecyclerView recyclerView;
@@ -72,7 +63,7 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     private Button btnCancel;
     private ProgressDialog progressDialog;
 
-    private ChooseMenuCallback chooseMenuCallback;
+    private MenuListenerCallback menuListenerCallback;
     private FragmentCallback callback;
 
     public PreOrderFragment() {
@@ -83,11 +74,11 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            chooseMenuCallback = (ChooseMenuCallback) context;
+            menuListenerCallback = (MenuListenerCallback) context;
             callback = (FragmentCallback) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement ChooseMenuCallback or FragmentCallback or PrimaryKeyMenuCallback");
+                    + " must implement MenuListenerCallback or FragmentCallback or PrimaryKeyMenuCallback");
         }
     }
 
@@ -95,25 +86,6 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        restaurantId = sharedPreferences.getString(StaticStringHelper.RESTAURANT_ID, null);
-        employeeName = sharedPreferences.getString(StaticStringHelper.EMPLOYEE_NAME, null);
-
-        if (getArguments() != null) {
-//            orderMenu = new ArrayList<>(getArguments().getStringArrayList(LIST_MENU));
-            restaurantId = getArguments().getString(ID_RESTAURANT);
-            tableId = getArguments().getString("TableId");
-            tableName = getArguments().getString("TableName");
-            transaction = getArguments().getString("Transaction");
-            transactionMenu = getArguments().getStringArrayList("TransactionMenu");
-
-            if (!transactionMenu.isEmpty()) {
-                for (int index = 0; index < transactionMenu.size(); index++) {
-                    Log.d(TAG, "onCreate: " + transactionMenu.get(index));
-                }
-            }
-
-        }
     }
 
     @Override
@@ -124,9 +96,18 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
 
         initializeUI(view);
         setupView();
+        getCurrentData();
         createPreOrderMenu();
 
         return view;
+    }
+
+    private void getCurrentData() {
+        restaurantId = AuthManager.getInstance().getCurrentRestaurantId();
+        employeeName = AuthManager.getInstance().getCurrentUserName();
+        tableId = TableManager.getInstance().getTableId();
+        tableName = TableManager.getInstance().getTableName();
+        transaction = TableManager.getInstance().getTransaction();
     }
 
     private void createPreOrderMenu() {
@@ -134,41 +115,36 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
             @Override
             public void loadMenuCallback(List<MenuEntity> menuEntities, boolean isSuccess) {
                 if (isSuccess) {
+                    buttonVerifyOrderMenuIsUseAble();
                     listPreOrderMenu = menuEntities;
                     createItemPreOrder(listPreOrderMenu);
                     setupPreOrderMenuAmount(listPreOrderMenu.size());
                     setupPreOrderMenuTotalPrice(listPreOrderMenu);
                 } else {
-
+                    buttonVerifyOrderMenuIsDisAble();
+                    setupPreOrderMenuAmount(0);
+                    setupPreOrderMenuTotalPrice(listPreOrderMenu);
                 }
             }
         });
     }
 
+    private void buttonVerifyOrderMenuIsUseAble() {
+        btnVerifyOrderMenu.setEnabled(true);
+    }
+
+    private void buttonVerifyOrderMenuIsDisAble() {
+        btnVerifyOrderMenu.setEnabled(false);
+    }
+
     private void setupPreOrderMenuTotalPrice(List<MenuEntity> listPreOrderMenu) {
-        int totalPrice = 0;
+        int totalPrice = MenuManager.getInstance().getPreOrderMenuTotalPrice(listPreOrderMenu);
 
-        for (int index = 0; index < listPreOrderMenu.size(); index++) {
-            totalPrice = totalPrice + Integer.parseInt(listPreOrderMenu.get(index).getPrice());
-        }
-
-        textViewMenuTotalPrice.setText(String.valueOf(totalPrice + " บาท"));
+        textViewMenuTotalPrice.setText(String.valueOf(totalPrice + " " + getString(R.string.baht)));
     }
 
     private void createItemPreOrder(List<MenuEntity> listPreOrderMenu) {
-        List<BaseItem> itemList = new ArrayList<>();
-
-
-        for (int index = 0; index < listPreOrderMenu.size(); index++) {
-            itemList.add(new PreOrderMenuItem()
-                    .setPreOrderMenuId(listPreOrderMenu.get(index).getIdMenu())
-                    .setPreOrderMenuImage(IMAGE_URL + listPreOrderMenu.get(index).getImg())
-                    .setPreOrderMenuName(listPreOrderMenu.get(index).getName())
-                    .setPreOrderMenuPrice(listPreOrderMenu.get(index).getPrice() + " บาท")
-                    .setPreOrderMenuAmount(1)
-                    .setPreOrderMenuPrimaryId(listPreOrderMenu.get(index).getPrimaryId())
-            );
-        }
+        List<BaseItem> itemList = MenuManager.getInstance().onCreatePreOrderMenu(listPreOrderMenu);
 
         adapter.setItemList(itemList);
         adapter.notifyDataSetChanged();
@@ -181,12 +157,6 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
         textViewMenuTotalPrice = view.findViewById(R.id.tv_pre_order_menu_price_total);
         btnAddOrder = view.findViewById(R.id.btn_add_order);
         btnVerifyOrderMenu = view.findViewById(R.id.btn_verify_order_menu);
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("กำลังทำการรายการ");
-        progressDialog.setCancelable(false);
-
-        btnVerifyOrderMenu.setOnClickListener(this);
-        btnAddOrder.setOnClickListener(this);
     }
 
     private void setupView() {
@@ -196,6 +166,13 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
                 onDeletePreOrderMenu(primaryKey);
             }
         };
+
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage(getString(R.string.pre_order_process));
+        progressDialog.setCancelable(false);
+
+        btnVerifyOrderMenu.setOnClickListener(this);
+        btnAddOrder.setOnClickListener(this);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()
                 , LinearLayoutManager.VERTICAL
@@ -216,12 +193,7 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setupPreOrderMenuAmount(int preOrderMenuTotal) {
-        chooseMenuCallback.onMenuAmount(preOrderMenuTotal);
-        if (preOrderMenuTotal < 10) {
-            textViewMenuTotal.setText(String.valueOf("0" + preOrderMenuTotal));
-        } else {
-            textViewMenuTotal.setText(String.valueOf(preOrderMenuTotal));
-        }
+        textViewMenuTotal.setText(MenuManager.getInstance().getPreOrderMenuAmount(preOrderMenuTotal));
     }
 
     private void updatePreOrderMenu() {
@@ -231,6 +203,11 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
                 if (isSuccess) {
                     setupPreOrderMenuAmount(menuEntities.size());
                     setupPreOrderMenuTotalPrice(menuEntities);
+                    menuListenerCallback.menuListenerCallback(true);
+                } else {
+                    setupPreOrderMenuAmount(0);
+                    setupPreOrderMenuTotalPrice(menuEntities);
+                    menuListenerCallback.menuListenerCallback(false);
                 }
             }
         });
@@ -244,11 +221,11 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.btn_ok:
                 sendPreOrderMenuToVerify();
-                dialog.cancel();
+                hideDialog();
                 removePreOrderMenu();
                 break;
             case R.id.btn_cancel:
-                dialog.cancel();
+                hideDialog();
                 break;
             case R.id.btn_add_order:
                 callback.onFragmentCallback(new AllMenuFragment());
@@ -269,44 +246,11 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     }
 
     private void sendPreOrderMenuToVerify() {
-        dialog.cancel();
         QueryData.onLoadMenu(getContext(), new SendListDataCallback() {
             @Override
             public void loadMenuCallback(List<MenuEntity> menuEntities, boolean isSuccess) {
                 if (isSuccess) {
-                    Log.d(TAG, "sendPreOrderMenuToVerify: " + transaction);
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference databaseReference = database.getReference()
-                            .child(TRANSACTION)
-                            .child(restaurantId)
-                            .child(tableId)
-                            .child(transaction);
-
-                    for (int index = 0; index < menuEntities.size(); index++) {
-                        int time = (int) (new Date().getTime() / 1000);
-                        String timeStampOrderMenu = "MT-" + time;
-                        databaseReference.child(timeStampOrderMenu);
-                        databaseReference.child(timeStampOrderMenu).child("date").setValue(menuEntities.get(index).getDate());
-                        databaseReference.child(timeStampOrderMenu).child("id").setValue(transaction);
-                        databaseReference.child(timeStampOrderMenu).child("id_menu").setValue(menuEntities.get(index).getIdMenu());
-                        databaseReference.child(timeStampOrderMenu).child("id_zone").setValue(menuEntities.get(index).getIdKitchen());
-                        databaseReference.child(timeStampOrderMenu).child("img").setValue(menuEntities.get(index).getImg());
-                        databaseReference.child(timeStampOrderMenu).child("name").setValue(menuEntities.get(index).getName());
-                        databaseReference.child(timeStampOrderMenu).child("price").setValue(menuEntities.get(index).getPrice());
-                        databaseReference.child(timeStampOrderMenu).child("status").setValue(STATUS_IN_PROCEED);
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    int timeStamp = (int) (new Date().getTime() / 1000);
-                    databaseReference.child("name_user").setValue(employeeName);
-                    databaseReference.child("status").setValue(STATUS_IN_PROCEED);
-                    databaseReference.child("timestamp").setValue(String.valueOf(timeStamp));
-
-                    Fragment fragment = new PreOrderedMenuFragment();
-                    callback.onFragmentCallback(fragment);
+                    setOnFirebase(menuEntities);
                 }
             }
         });
@@ -314,7 +258,6 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showPopup() {
-
         dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.popup_pre_order_verify);
@@ -323,13 +266,53 @@ public class PreOrderFragment extends Fragment implements View.OnClickListener {
 
         btnOk = dialog.findViewById(R.id.btn_ok);
         btnCancel = dialog.findViewById(R.id.btn_cancel);
-        int time = (int) (new Date().getTime() / 1000);
-
-        String timeStampTransaction = "TR-" + time;
 
         btnOk.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
     }
+
+    private void setOnFirebase(List<MenuEntity> menuEntities) {
+        showLoading();
+
+        MenuManager.getInstance().onSetPreOrderMenuToFirebase(menuEntities
+                , restaurantId
+                , tableId
+                , tableName
+                , employeeName
+                , transaction
+                , new MenuManager.SetupPreOrderMenuToFirebaseCallback() {
+                    @Override
+                    public void onComplete(boolean isSuccess) {
+                        hideLoading();
+                        goToPreOrderedMenuScreen();
+                        menuListenerCallback.menuListenerCallback(false);
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                });
+
+    }
+
+    private void showLoading() {
+        progressDialog.show();
+    }
+
+    private void goToPreOrderedMenuScreen() {
+        Fragment fragment = new PreOrderedMenuFragment();
+        callback.onFragmentCallback(fragment);
+    }
+
+    private void hideLoading() {
+        progressDialog.dismiss();
+    }
+
+    private void hideDialog() {
+        dialog.cancel();
+    }
+
 }
 
 
