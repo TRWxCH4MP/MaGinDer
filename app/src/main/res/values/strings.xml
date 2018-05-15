@@ -21,5 +21,8 @@
     <string name="table">โต๊ะ</string>
     <string name="login_is_process">กำลังทำการล็อคอิน</string>
     <string name="loading_table">กำลังโหลดข้อมูลโต๊ะอาหาร</string>
+    <string name="ready_service">พร้อมให้บริการ</string>
+    <string name="baht">บาท</string>
+    <string name="loading_menu">กำลังโหลดรายการอาหาร</string>
 
 </resources>
