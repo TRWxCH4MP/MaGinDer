@@ -24,5 +24,6 @@
     <string name="ready_service">พร้อมให้บริการ</string>
     <string name="baht">บาท</string>
     <string name="loading_menu">กำลังโหลดรายการอาหาร</string>
+    <string name="pre_order_process">กำลังทำการรายการ</string>
 
 </resources>
