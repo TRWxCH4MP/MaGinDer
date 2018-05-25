@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.trw.maginder.model.Contextor;
-import com.example.trw.maginder.model.StaticStringHelper;
+import com.example.trw.maginder.utility.StaticStringHelper;
 import com.example.trw.maginder.service.dao.LoginItemDao;
 import com.example.trw.maginder.service.http_manger.HttpManager;
 

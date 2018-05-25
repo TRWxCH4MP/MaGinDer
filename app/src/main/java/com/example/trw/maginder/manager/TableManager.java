@@ -3,7 +3,7 @@ package com.example.trw.maginder.manager;
 import com.example.trw.maginder.adapter.item.BaseItem;
 import com.example.trw.maginder.adapter.item.TableItem;
 import com.example.trw.maginder.create_item.CreateTableItem;
-import com.example.trw.maginder.model.StaticStringHelper;
+import com.example.trw.maginder.utility.StaticStringHelper;
 import com.example.trw.maginder.service.dao.TableItemCollectionDao;
 import com.example.trw.maginder.service.http_manger.HttpManagerTable;
 import com.google.firebase.database.ChildEventListener;

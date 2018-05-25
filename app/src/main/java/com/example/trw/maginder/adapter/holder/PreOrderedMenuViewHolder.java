@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.trw.maginder.R;
+import com.example.trw.maginder.utility.StaticStringHelper;
 
 /**
  * Created by _TRW on 6/2/2561.
@@ -42,6 +43,12 @@ public class PreOrderedMenuViewHolder extends BaseViewHolder{
     }
 
     public void setTvMenuState(String state) {
+        if (state.equals(StaticStringHelper.STATUS_IN_PROCEED)) {
+            tvMenuState.setBackgroundResource(R.drawable.bg_btn_radius_soft_orange);
+        } else if (state.equals(StaticStringHelper.STATUS_IN_SUCCESSFUL)) {
+            tvMenuState.setBackgroundResource(R.drawable.bg_btn_radius_green);
+        }
+
         tvMenuState.setText(state);
     }
 

@@ -12,7 +12,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,7 @@ import com.example.trw.maginder.callback.TableCallback;
 import com.example.trw.maginder.create_item.CreateTableItem;
 import com.example.trw.maginder.manager.AuthManager;
 import com.example.trw.maginder.manager.TableManager;
-import com.example.trw.maginder.model.StaticStringHelper;
+import com.example.trw.maginder.utility.StaticStringHelper;
 import com.example.trw.maginder.service.dao.TableItemCollectionDao;
 
 import java.util.ArrayList;
