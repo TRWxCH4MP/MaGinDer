@@ -18,6 +18,6 @@ public class StaticStringHelper {
     public static final String TRUE = "true";
     public static final String FALSE = "false";
     public static final String IMAGE_URL = "http://it2.sut.ac.th/prj60_g14/Project/menu_img/";
-    public static final String TRANSACTION = "Transaction";
+    public static final String TRANSACTION = "Transaction2";
     public static final String STATUS_IN_PROCEED = "กำลังดำเนินการ";
 }
