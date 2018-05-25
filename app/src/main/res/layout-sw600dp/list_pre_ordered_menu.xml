@@ -26,12 +26,12 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/default_margin_padding"
                 android:layout_weight="1"
                 android:orientation="vertical">
@@ -41,18 +41,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/default_margin_padding_small"
-                    android:textSize="@dimen/default_text_size_small"
+                    android:textSize="@dimen/default_text_size_extra_small"
                     tools:text="ข้าวผัดเขียวหวานหมู"
-                    tools:textSize="@dimen/default_text_size_small" />
+                    tools:textSize="@dimen/default_text_size_extra_small" />
 
                 <TextView
                     android:id="@+id/tv_pre_ordered_menu_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/default_margin_padding_small"
-                    android:textSize="@dimen/default_text_size_small"
+                    android:textSize="@dimen/default_text_size_extra_small"
                     tools:text="65 บาท"
-                    tools:textSize="@dimen/default_text_size_small" />
+                    tools:textSize="@dimen/default_text_size_extra_small" />
 
                 <TextView
                     android:id="@+id/tv_pre_ordered_menu_state"
@@ -64,6 +64,7 @@
                     android:paddingStart="@dimen/default_margin_padding"
                     android:paddingTop="@dimen/default_margin_padding_extra_small"
                     android:textColor="@color/maginder_soft_white"
+                    android:textSize="@dimen/default_text_size_extra_small"
                     tools:background="@drawable/bg_btn_radius_soft_orange"
                     tools:text="กำลังดำเนินการ"
                     tools:textSize="@dimen/default_text_size_extra_small" />
@@ -74,7 +75,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/circle_icon" />
+                android:src="@drawable/circle_icon"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
