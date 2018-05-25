@@ -6,6 +6,15 @@
     android:orientation="vertical"
     tools:context="com.example.trw.maginder.fragment.PreOrderedMenuFragment">
 
+    <TextView
+        android:id="@+id/tv_table_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="@dimen/default_text_size"
+        android:textStyle="bold"
+        tools:text="Table" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,14 +22,14 @@
 
         <TextView
             android:id="@+id/tv_pre_ordered_user_name_prefix"
-            tools:visibility="visible"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin_padding_small"
             android:text="คุณ"
             android:textSize="@dimen/default_text_size_small"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/tv_pre_ordered_user_name"
@@ -28,9 +37,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/default_margin_padding_small"
             android:layout_marginTop="@dimen/default_margin_padding_small"
-            tools:text="champ"
             android:textSize="@dimen/default_text_size_small"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="champ" />
 
     </LinearLayout>
 
