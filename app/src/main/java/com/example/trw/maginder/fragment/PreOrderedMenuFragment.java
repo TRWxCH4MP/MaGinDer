@@ -30,6 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,11 +45,13 @@ public class PreOrderedMenuFragment extends Fragment {
     private String idRestaurant;
     private String tableId;
     private String transaction;
+    private String tableName;
     private List<String> listTransaction = new ArrayList<String>();
     private List<CreatePreOrderedMenu> listPreOrderedMenu = new ArrayList<>();
 
     private TextView tvUserName;
     private TextView tvUserNamePrefix;
+    private TextView tvTableName;
     private RecyclerView recyclerView;
     private MainAdapter adapter;
 
@@ -61,6 +65,7 @@ public class PreOrderedMenuFragment extends Fragment {
 
         idRestaurant = AuthManager.getInstance().getCurrentRestaurantId();
         tableId = TableManager.getInstance().getTableId();
+        tableName = TableManager.getInstance().getTableName();
 
     }
 
@@ -79,10 +84,13 @@ public class PreOrderedMenuFragment extends Fragment {
     private void initializeUI(View view) {
         tvUserName = view.findViewById(R.id.tv_pre_ordered_user_name);
         tvUserNamePrefix = view.findViewById(R.id.tv_pre_ordered_user_name_prefix);
+        tvTableName = view.findViewById(R.id.tv_table_name);
         recyclerView = view.findViewById(R.id.recycler_view_list_pre_ordered_menu);
     }
 
     private void setupView() {
+        tvTableName.setText(tableName);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()
                 , LinearLayoutManager.VERTICAL
                 , false));
