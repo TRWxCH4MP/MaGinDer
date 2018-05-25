@@ -1,4 +1,4 @@
-package com.example.trw.maginder.model;
+package com.example.trw.maginder.utility;
 
 public class StaticStringHelper {
 
@@ -20,4 +20,5 @@ public class StaticStringHelper {
     public static final String IMAGE_URL = "http://it2.sut.ac.th/prj60_g14/Project/menu_img/";
     public static final String TRANSACTION = "Transaction2";
     public static final String STATUS_IN_PROCEED = "กำลังดำเนินการ";
+    public static final String STATUS_IN_SUCCESSFUL = "เสร็จสิ้น";
 }
