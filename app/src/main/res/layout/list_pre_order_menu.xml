@@ -60,15 +60,15 @@
                 android:orientation="horizontal">
 
                 <!--<Button-->
-                    <!--android:visibility="invisible"-->
-                    <!--android:id="@+id/btn_remove_pre_order_menu"-->
-                    <!--android:layout_width="30dp"-->
-                    <!--android:layout_height="30dp"-->
-                    <!--android:layout_margin="@dimen/default_margin_padding_small"-->
-                    <!--android:background="@drawable/bg_btn_radius_soft_orange"-->
-                    <!--android:text="-"-->
-                    <!--android:textColor="@color/maginder_soft_white"-->
-                    <!--android:textSize="@dimen/default_text_size_extra_small" />-->
+                <!--android:visibility="invisible"-->
+                <!--android:id="@+id/btn_remove_pre_order_menu"-->
+                <!--android:layout_width="30dp"-->
+                <!--android:layout_height="30dp"-->
+                <!--android:layout_margin="@dimen/default_margin_padding_small"-->
+                <!--android:background="@drawable/bg_btn_radius_soft_orange"-->
+                <!--android:text="-"-->
+                <!--android:textColor="@color/maginder_soft_white"-->
+                <!--android:textSize="@dimen/default_text_size_extra_small" />-->
 
                 <Button
                     android:id="@+id/btn_pre_order_menu_amount"
@@ -80,15 +80,15 @@
                     android:textSize="@dimen/default_text_size_extra_small" />
 
                 <!--<Button-->
-                    <!--android:visibility="invisible"-->
-                    <!--android:id="@+id/btn_add_more_pre_order_menu"-->
-                    <!--android:layout_width="30dp"-->
-                    <!--android:layout_height="30dp"-->
-                    <!--android:layout_margin="@dimen/default_margin_padding_small"-->
-                    <!--android:background="@drawable/bg_btn_radius_soft_orange"-->
-                    <!--android:text="+"-->
-                    <!--android:textColor="@color/maginder_soft_white"-->
-                    <!--android:textSize="@dimen/default_text_size_extra_small" />-->
+                <!--android:visibility="invisible"-->
+                <!--android:id="@+id/btn_add_more_pre_order_menu"-->
+                <!--android:layout_width="30dp"-->
+                <!--android:layout_height="30dp"-->
+                <!--android:layout_margin="@dimen/default_margin_padding_small"-->
+                <!--android:background="@drawable/bg_btn_radius_soft_orange"-->
+                <!--android:text="+"-->
+                <!--android:textColor="@color/maginder_soft_white"-->
+                <!--android:textSize="@dimen/default_text_size_extra_small" />-->
 
                 <Button
                     android:id="@+id/btn_remove_pre_order_menu"
