@@ -3,9 +3,6 @@ package com.example.trw.maginder.manager;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.adapter.item.BaseItem;
@@ -16,9 +13,8 @@ import com.example.trw.maginder.db.QueryData;
 import com.example.trw.maginder.db.callback.OnStateCallback;
 import com.example.trw.maginder.db.callback.SendListDataCallback;
 import com.example.trw.maginder.db.entity.MenuEntity;
-import com.example.trw.maginder.fragment.PreOrderedMenuFragment;
 import com.example.trw.maginder.model.Contextor;
-import com.example.trw.maginder.model.StaticStringHelper;
+import com.example.trw.maginder.utility.StaticStringHelper;
 import com.example.trw.maginder.service.dao.RestaurantItemCollectionDao;
 import com.example.trw.maginder.service.dao.RestaurantItemDao;
 import com.example.trw.maginder.service.dao.RestaurantMenuTypeItemCollectionDao;
@@ -313,15 +309,15 @@ public class MenuManager {
 //                Log.d(TAG, "doInBackground: " + index);
                 int time = (int) (new Date().getTime() / 1000);
                 String timeStampOrderMenu = "MT-" + time;
-                databaseReference.child(timeStampOrderMenu);
                 databaseReference.child(timeStampOrderMenu).child("date").setValue(menuEntities.get(index).getDate());
                 databaseReference.child(timeStampOrderMenu).child("id").setValue(transaction);
                 databaseReference.child(timeStampOrderMenu).child("id_menu").setValue(menuEntities.get(index).getIdMenu());
-                databaseReference.child(timeStampOrderMenu).child("id_zone").setValue(menuEntities.get(index).getIdKitchen());
+                databaseReference.child(timeStampOrderMenu).child("id_kitchen").setValue(menuEntities.get(index).getIdKitchen());
                 databaseReference.child(timeStampOrderMenu).child("img").setValue(menuEntities.get(index).getImg());
                 databaseReference.child(timeStampOrderMenu).child("name").setValue(menuEntities.get(index).getName());
                 databaseReference.child(timeStampOrderMenu).child("price").setValue(menuEntities.get(index).getPrice());
                 databaseReference.child(timeStampOrderMenu).child("status").setValue(StaticStringHelper.STATUS_IN_PROCEED);
+                databaseReference.child(timeStampOrderMenu).child("transaction_menu").setValue(timeStampOrderMenu);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -330,9 +326,9 @@ public class MenuManager {
                 }
             }
             int timeStamp = (int) (new Date().getTime() / 1000);
-            databaseReference.child("name_user").setValue(employeeName);
-            databaseReference.child("status").setValue(StaticStringHelper.STATUS_IN_PROCEED);
-            databaseReference.child("timestamp").setValue(String.valueOf(timeStamp)
+            databaseReference.child("detail").child("name_user").setValue(employeeName);
+            databaseReference.child("detail").child("transaction_status").setValue(StaticStringHelper.STATUS_IN_PROCEED);
+            databaseReference.child("detail").child("timestamp").setValue(String.valueOf(timeStamp)
                     , onPreOrderMenuCompletionListener);
 
             return true;
@@ -345,20 +341,6 @@ public class MenuManager {
         }
 
         DatabaseReference.CompletionListener onPreOrderMenuCompletionListener = new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                FirebaseDatabase database2 = FirebaseDatabase.getInstance();
-                DatabaseReference databaseRef2 = database2.getReference()
-                        .child(StaticStringHelper.TRANSACTION)
-                        .child(restaurantId)
-                        .child(tableId)
-                        .child("data");
-                databaseRef2.child("name_table").setValue(tableName
-                        , onPreOrderDataCompletionListener);
-            }
-        };
-
-        DatabaseReference.CompletionListener onPreOrderDataCompletionListener = new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 callback.onComplete(true);
