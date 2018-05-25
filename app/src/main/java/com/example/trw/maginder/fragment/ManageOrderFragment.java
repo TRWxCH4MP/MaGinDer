@@ -15,13 +15,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.trw.maginder.R;
+import com.example.trw.maginder.manager.AuthManager;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ManageOrderFragment extends Fragment {
-    private static final String PREF_NAME = "PREF_NAME";
-    private static final String ID_RESTAURANT = "id_restaurant";
     private WebView webViewManagerOrder;
 
     private String idRestaurant;
@@ -34,8 +33,7 @@ public class ManageOrderFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        idRestaurant = sharedPreferences.getString(ID_RESTAURANT, null);
+        idRestaurant = AuthManager.getInstance().getCurrentRestaurantId();
     }
 
     @Override
