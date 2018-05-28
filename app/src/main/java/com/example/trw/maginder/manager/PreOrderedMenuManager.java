@@ -9,7 +9,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +17,6 @@ public class PreOrderedMenuManager {
 
     private static PreOrderedMenuManager manager;
     private List<CreatePreOrderedMenu> listPreOrderedMenu = new ArrayList<>();
-    private String transaction;
-    private String idRestaurant;
-    private String tableId;
 
     public static PreOrderedMenuManager getInstance() {
         if (manager == null) {
@@ -33,36 +29,10 @@ public class PreOrderedMenuManager {
 
     }
 
-    public void onSetupTransactionOrdered(String idRestaurant, String tableId) {
-        this.idRestaurant = idRestaurant;
-        this.tableId = tableId;
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference()
-                .child(StaticStringHelper.TRANSACTION)
-                .child(idRestaurant)
-                .child(tableId);
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    transaction = ds.getKey();
-                }
-//                getData();
-//                callback.onSetupTransactionSuccess(transaction);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-//                callback.onSetupTransactionFailure(databaseError.toString());
-            }
-        });
-    }
-
-    public void getData() {
-
+    public void onGetPreOrderedMenu(String idRestaurant, String tableId, String transaction, final SetupPreOrderedCallback callback) {
+        listPreOrderedMenu.clear();
         if (transaction != null) {
-            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference databaseReference = database.getReference()
                     .child(StaticStringHelper.TRANSACTION)
                     .child(idRestaurant)
@@ -73,8 +43,8 @@ public class PreOrderedMenuManager {
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     CreatePreOrderedMenu data = dataSnapshot.getValue(CreatePreOrderedMenu.class);
                     listPreOrderedMenu.add(data);
-//                    callback.onPreOrderedMenuAdded(listPreOrderedMenu);
-//                    onCreatePreOrderedMenu();
+                    callback.onPreOrderedAdded(listPreOrderedMenu);
+//                    onCreatePreOrderedMenu(listPreOrderedMenu);
 //                    Log.d(TAG, "onChildAdded: ");
                 }
 
@@ -86,8 +56,8 @@ public class PreOrderedMenuManager {
 //                    Log.d(TAG, "updateItemOnDataChange2 index: " + index);
                     if (index > -1) {
                         listPreOrderedMenu.set(index, data);
-//                        callback.onPreOrderedMenuChanged(listPreOrderedMenu);
-//                        onCreatePreOrderedMenu();
+                        callback.onPreOrderedChanged(listPreOrderedMenu);
+//                        onCreatePreOrderedMenu(listPreOrderedMenu);
                     }
 
                 }
@@ -128,7 +98,7 @@ public class PreOrderedMenuManager {
         return index;
     }
 
-    public List<BaseItem> onCreatePreOrderedMenu() {
+    public List<BaseItem> OnCreatePreOrderedMenu(List<CreatePreOrderedMenu> listPreOrderedMenu) {
         List<BaseItem> itemList = new ArrayList<>();
 
         for (int index = 0; index < listPreOrderedMenu.size(); index++) {
@@ -148,17 +118,10 @@ public class PreOrderedMenuManager {
         return itemList;
     }
 
+    public interface SetupPreOrderedCallback {
+        void onPreOrderedAdded(List<CreatePreOrderedMenu> listPreOrderedMenu);
 
-    public interface PreOrderedMenuCallback {
-        void onPreOrderedMenuAdded(List<CreatePreOrderedMenu> listPreOrderedMenu);
-
-        void onPreOrderedMenuChanged(List<CreatePreOrderedMenu> listPreOrderedMenu);
-    }
-
-    public interface SetupPreOrderedMenuCallback {
-        void onSetupTransactionSuccess(String transaction);
-
-        void onSetupTransactionFailure(String error);
+        void onPreOrderedChanged(List<CreatePreOrderedMenu> listPreOrderedMenu);
     }
 
 }
