@@ -5,32 +5,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.example.trw.maginder.R;
 import com.example.trw.maginder.adapter.MainAdapter;
 import com.example.trw.maginder.adapter.item.BaseItem;
-import com.example.trw.maginder.adapter.item.PreOrderedMenuItem;
 import com.example.trw.maginder.create_item.CreatePreOrderedMenu;
-import com.example.trw.maginder.create_item.CreateTableItem;
 import com.example.trw.maginder.manager.AuthManager;
-import com.example.trw.maginder.manager.MenuManager;
 import com.example.trw.maginder.manager.PreOrderedMenuManager;
 import com.example.trw.maginder.manager.TableManager;
-import com.example.trw.maginder.utility.StaticStringHelper;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +32,6 @@ public class PreOrderedMenuFragment extends Fragment {
     private String tableId;
     private String transaction;
     private String tableName;
-    private List<String> listTransaction = new ArrayList<String>();
-    private List<CreatePreOrderedMenu> listPreOrderedMenu = new ArrayList<>();
 
     private TextView tvUserName;
     private TextView tvUserNamePrefix;
@@ -97,50 +81,36 @@ public class PreOrderedMenuFragment extends Fragment {
         adapter = new MainAdapter();
         recyclerView.setAdapter(adapter);
 
-        getItem();
+        checkHasChildTableTransaction();
     }
 
-    private void getItem() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference()
-                .child(StaticStringHelper.TRANSACTION)
-                .child(idRestaurant)
-                .child(tableId);
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void checkHasChildTableTransaction() {
+        TableManager.getInstance().onCheckHasChildTableTransaction(new TableManager.CheckHasChildTableTransactionCallback() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    String child = ds.getKey();
-                    Log.d(TAG, "onDataChange: " + child);
-                    listTransaction.add(child);
-                    transaction = child;
-                }
-                getData();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onHasChildTableTransaction(String childTableTransaction) {
+                setupPreOrderedMenu(childTableTransaction);
             }
         });
     }
 
-    public void onCreatePreOrderedMenu(List<CreatePreOrderedMenu> listPreOrderedMenu) {
-        List<BaseItem> itemList = new ArrayList<>();
-
-        for (int index = 0; index < listPreOrderedMenu.size(); index++) {
-            if (listPreOrderedMenu.get(index).getImg() != null
-                    && listPreOrderedMenu.get(index).getName() != null
-                    && listPreOrderedMenu.get(index).getPrice() != null
-                    && listPreOrderedMenu.get(index).getStatus() != null) {
-                itemList.add(new PreOrderedMenuItem()
-                        .setPreOrderedMenuImage(StaticStringHelper.IMAGE_URL + listPreOrderedMenu.get(index).getImg())
-                        .setPreOrderedMenuName(listPreOrderedMenu.get(index).getName())
-                        .setPreOrderedMenuPrice(listPreOrderedMenu.get(index).getPrice() + " บาท")
-                        .setPreOrderedMenuState(listPreOrderedMenu.get(index).getStatus())
-                );
+    private void setupPreOrderedMenu(String transaction) {
+        PreOrderedMenuManager.getInstance()
+                .onGetPreOrderedMenu(idRestaurant, tableId, transaction, new PreOrderedMenuManager.SetupPreOrderedCallback() {
+            @Override
+            public void onPreOrderedAdded(List<CreatePreOrderedMenu> listPreOrderedMenu) {
+                createPreOrderedMenu(listPreOrderedMenu);
             }
-        }
+
+            @Override
+            public void onPreOrderedChanged(List<CreatePreOrderedMenu> listPreOrderedMenu) {
+                createPreOrderedMenu(listPreOrderedMenu);
+            }
+        });
+
+    }
+
+    public void createPreOrderedMenu(List<CreatePreOrderedMenu> listPreOrderedMenu) {
+        List<BaseItem> itemList = PreOrderedMenuManager.getInstance().OnCreatePreOrderedMenu(listPreOrderedMenu);
 
         adapter.setItemList(itemList);
         adapter.notifyDataSetChanged();
@@ -153,73 +123,6 @@ public class PreOrderedMenuFragment extends Fragment {
                 tvUserNamePrefix.setVisibility(View.VISIBLE);
                 tvUserName.setText(String.valueOf(listPreOrderedMenu.get(index).getName_user()));
             }
-        }
-    }
-
-    private int updateItemOnDataChange(String data) {
-        Log.d(TAG, "updateItemOnDataChange: " + data);
-        int index = -1;
-        for (int i = 0; i < listPreOrderedMenu.size(); i++) {
-            Log.d(TAG, "For loop: " + listPreOrderedMenu.get(i).getTransaction_menu());
-            if (listPreOrderedMenu.get(i).getTransaction_menu() != null
-                    && listPreOrderedMenu.get(i).getTransaction_menu().equals(data)) {
-                Log.d(TAG, "updateItemOnDataChange: match" + i);
-                index = i;
-            }
-        }
-        return index;
-    }
-
-    private void getData() {
-
-        if (transaction != null) {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference databaseReference = database.getReference()
-                    .child(StaticStringHelper.TRANSACTION)
-                    .child(idRestaurant)
-                    .child(tableId)
-                    .child(transaction);
-            databaseReference.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    CreatePreOrderedMenu data = dataSnapshot.getValue(CreatePreOrderedMenu.class);
-                    listPreOrderedMenu.add(data);
-                    onCreatePreOrderedMenu(listPreOrderedMenu);
-                    Log.d(TAG, "onChildAdded: ");
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    CreatePreOrderedMenu data = dataSnapshot.getValue(CreatePreOrderedMenu.class);
-                    Log.d(TAG, "onChildChanged: ");
-                    int index = updateItemOnDataChange(data.getTransaction_menu());
-//                    Log.d(TAG, "updateItemOnDataChange2 index: " + index);
-                    if (index > -1) {
-                        listPreOrderedMenu.set(index, data);
-                        onCreatePreOrderedMenu(listPreOrderedMenu);
-                    }
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-
-            });
-
-        } else {
-            Log.d(TAG, "getData: child is null");
         }
     }
 
