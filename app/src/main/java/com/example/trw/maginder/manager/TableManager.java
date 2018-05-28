@@ -1,5 +1,7 @@
 package com.example.trw.maginder.manager;
 
+import android.util.Log;
+
 import com.example.trw.maginder.adapter.item.BaseItem;
 import com.example.trw.maginder.adapter.item.TableItem;
 import com.example.trw.maginder.create_item.CreateTableItem;
@@ -222,6 +224,56 @@ public class TableManager {
                 });
     }
 
+    public void onCheckHasChildTable(final CheckHasChildTableCallback callback) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference()
+                .child(StaticStringHelper.TRANSACTION)
+                .child(AuthManager.getInstance().getCurrentRestaurantId());
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(getTableId())) {
+                    callback.onHasChildTable(true);
+//                    Log.d(TAG, "checkTableTransaction: " + getTableId());
+//                    Log.d(TAG, "checkTableTransaction: " + getTableTransaction());
+                } else {
+                    callback.onHasChildTable(false);
+//                    Log.d(TAG, "checkTableTransaction: " + "table transaction is null");
+//                    Log.d(TAG, "checkTableTransaction: " + getTableTransaction());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void onCheckHasChildTableTransaction(final CheckHasChildTableTransactionCallback callback) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference()
+                .child(StaticStringHelper.TRANSACTION)
+                .child(AuthManager.getInstance().getCurrentRestaurantId())
+                .child(getTableId());
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String child = ds.getKey();
+                    callback.onHasChildTableTransaction(child);
+//                    Log.d(TAG, "checkChild: " + child);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     public interface TableManagerCallback {
         void onCreateSuccess(TableItemCollectionDao dao);
@@ -241,5 +293,13 @@ public class TableManager {
         void onSuccess(boolean isSuccess);
 
         void onZoneIdIsNotMatch(String error);
+    }
+
+    public interface CheckHasChildTableCallback {
+        void onHasChildTable(boolean isSuccess);
+    }
+
+    public interface CheckHasChildTableTransactionCallback {
+        void onHasChildTableTransaction(String childTableTransaction);
     }
 }
