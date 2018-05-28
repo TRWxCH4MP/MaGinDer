@@ -12,6 +12,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,11 @@ import com.example.trw.maginder.manager.AuthManager;
 import com.example.trw.maginder.manager.TableManager;
 import com.example.trw.maginder.utility.StaticStringHelper;
 import com.example.trw.maginder.service.dao.TableItemCollectionDao;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -123,7 +129,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
 
     private void showPopup() {
         showDialog();
-
+        checkHasChildTable();
         if (getTableState()) {
             tableIsOpen();
         } else {
@@ -310,11 +316,44 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
         }
     }
 
-    private void goToMenuActivity() {
-        int time = (int) (new Date().getTime() / 1000);
-        String timeStampTransaction = "TR-" + time;
-        TableManager.getInstance().setTransaction(timeStampTransaction);
+    private void checkHasChildTable() {
+        TableManager.getInstance().onCheckHasChildTable(new TableManager.CheckHasChildTableCallback() {
+            @Override
+            public void onHasChildTable(boolean isSuccess) {
+             if (isSuccess) {
+                 checkHasChildTableTransaction();
+             } else {
+                 setupTableTransaction(null);
+             }
+            }
+        });
+    }
 
+    private void checkHasChildTableTransaction() {
+        TableManager.getInstance().onCheckHasChildTableTransaction(new TableManager.CheckHasChildTableTransactionCallback() {
+            @Override
+            public void onHasChildTableTransaction(String childTableTransaction) {
+                setupTableTransaction(childTableTransaction);
+            }
+        });
+    }
+
+    private void setupTableTransaction(String tableTransaction) {
+        if (tableTransaction != null) {
+            TableManager.getInstance().setTransaction(tableTransaction);
+//            Log.d(TAG, "xxxx not null : " + tableTransaction);
+        } else {
+            TableManager.getInstance().setTransaction(setupTransaction());
+//            Log.d(TAG, "xxxx is null : new " + setupTransaction());
+        }
+    }
+
+    private String setupTransaction() {
+        int time = (int) (new Date().getTime() / 1000);
+        return "TR-" + time;
+    }
+
+    private void goToMenuActivity() {
         Intent intent = new Intent(getContext(), MenuActivity.class);
         startActivity(intent);
     }
