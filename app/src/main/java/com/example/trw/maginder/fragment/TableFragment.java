@@ -12,6 +12,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     private static final String TAG = "ManageTableActivity";
 
     private String restaurantId;
+    private String tableName;
     private List<String> listTabLayoutZone = new ArrayList<>();
     private List<String> listZoneId = new ArrayList<>();
 
@@ -132,6 +134,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     }
 
     private void setTableData(String zoneId, String tableId, String tableName, String tableState) {
+        this.tableName = tableName;
         setZoneId(zoneId);
         TableManager.getInstance().setTableId(tableId);
         TableManager.getInstance().setTableState(tableState);
@@ -154,6 +157,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     }
 
     private void tableIsOpen() {
+        textViewTableName.setText(tableName);
         textViewCustomerNum.setVisibility(View.VISIBLE);
         textViewNum.setVisibility(View.VISIBLE);
         editTextCustomerNum.setVisibility(View.VISIBLE);
@@ -161,6 +165,7 @@ public class TableFragment extends Fragment implements TabLayout.OnTabSelectedLi
     }
 
     private void tableIsClosed() {
+        textViewTableName.setText(tableName);
         textViewCustomerNum.setVisibility(View.INVISIBLE);
         textViewNum.setVisibility(View.INVISIBLE);
         editTextCustomerNum.setVisibility(View.INVISIBLE);
