@@ -32,7 +32,6 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
 
     private Drawer drawer;
     private PrimaryDrawerItem itemTable;
-    private PrimaryDrawerItem itemManageOrder;
     private PrimaryDrawerItem itemSignOut;
 
     @Override
@@ -107,12 +106,6 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
                 .withIcon(R.drawable.tray)
                 .withSelectable(false);
 
-        itemManageOrder = new PrimaryDrawerItem()
-                .withIdentifier(1)
-                .withName(R.string.manage_order_menu)
-                .withIcon(R.drawable.alarm)
-                .withSelectable(false);
-
         itemSignOut = new PrimaryDrawerItem()
                 .withIdentifier(2)
                 .withName(R.string.sign_out)
@@ -136,7 +129,6 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
                 .withSliderBackgroundColorRes(R.color.maginder_deep_grey)
                 .addDrawerItems(
                         itemTable.withTextColorRes(R.color.maginder_soft_white),
-                        itemManageOrder.withTextColorRes(R.color.maginder_soft_white),
                         itemSignOut.withTextColorRes(R.color.maginder_soft_white)
                 )
                 .withOnDrawerItemClickListener(onDrawerItemClickListener)
@@ -149,9 +141,6 @@ public class ManageTableActivity extends AppCompatActivity implements View.OnCli
             Fragment fragment;
             if (drawerItem == itemTable) {
                 fragment = new TableFragment();
-                replaceFragment(fragment);
-            } else if (drawerItem == itemManageOrder) {
-                fragment = new ManageOrderFragment();
                 replaceFragment(fragment);
             } else if (drawerItem == itemSignOut) {
                 onLogOut();
