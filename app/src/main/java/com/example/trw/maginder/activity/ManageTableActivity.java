@@ -6,13 +6,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.trw.maginder.R;
-import com.example.trw.maginder.fragment.ManageOrderFragment;
 import com.example.trw.maginder.fragment.TableFragment;
 import com.example.trw.maginder.manager.AuthManager;
 import com.mikepenz.materialdrawer.AccountHeader;
